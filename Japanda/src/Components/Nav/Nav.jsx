@@ -16,17 +16,28 @@ function Nav() {
                 </div>
                 <nav className="navbar">
 
-                    <a href="#" className='navbar-element'>Alimentación</a>
-                    <a href="#" className='navbar-element'>Decoración</a>
-                    <a href="#" className='navbar-element'>Merchandising</a>
-                    <a href="#" className='navbar-element'>Moda</a>
-                    <a href="#" className='navbar-element'>Inciensos <mark className='tag-new'>¡NUEVO!</mark></a>
+                    <a href="#" className='navbar-element'>
+                        <span className="nav-text">Alimentación</span>
+                    </a>
+                    <a href="#" className='navbar-element'>
+                        <span className="nav-text">Decoración</span>
+                    </a>
+                    <a href="#" className='navbar-element'>
+                        <span className="nav-text">Merchandising</span>
+                    </a>
+                    <a href="#" className='navbar-element'>
+                        <span className="nav-text">Moda</span>
+                    </a>
+                    <a href="#" className='navbar-element'>
+                        <span className="nav-text">Inciensos <mark className='tag-new'>¡NUEVO!</mark></span>
+                    </a>
+
 
 
                     <div className='navbar-svg-element-wrapper'>
 
                         <div className='side-container'>
-                            <a href='#' className='navbar-element'>Carrito</a>
+                            <a href='#' className='navbar-element'><span className="nav-text">Carrito</span></a>
                             {/*Svg carrito*/}
                             <a href="#" className='svg-wrapper'>
                                 <svg xmlns="http://www.w3.org/2000/svg" className='navbar-svg-element' viewBox="0 0 24 24" >
@@ -38,7 +49,7 @@ function Nav() {
                         </div>
 
                         <div className='side-container'>
-                            <a href='#' className='navbar-element'>Ajustes</a>
+                            <a href='#' className='navbar-element'><span className="nav-text">Ajustes</span></a>
                             {/*Svg Settings*/}
                             <a href="#" className='svg-wrapper'>
                                 <svg xmlns="http://www.w3.org/2000/svg" className='navbar-svg-element' viewBox="0 0 24 24">
@@ -49,7 +60,7 @@ function Nav() {
 
 
                         <div className='side-container'>
-                            <a href='#' className='navbar-element'>Log in</a>
+                            <a href='#' className='navbar-element'><span className="nav-text">Log in</span></a>
                             {/* Svg Perfil */}
                             <a href="#" className='svg-wrapper'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='navbar-svg-element'>
@@ -61,10 +72,8 @@ function Nav() {
 
                     </div>
                 </nav>
-
-
-
             </div>
+            <div className="banner-publicidad"></div>
 
 
         </>

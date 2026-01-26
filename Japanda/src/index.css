@@ -65,9 +65,27 @@ body {
     color: var(--prim-color);
     padding: 1.6vw;
     font-weight: 500;
-
+    display: inline-block;
+}
+.nav-text {
+    position: relative;
+    display: inline-block;
+}
+.nav-text::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.3em;        
+    width: 100%;         
+    height: 2px;
+    background-color: var(--acc-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
 
 }
+
+
 
 
 .tag-new {
@@ -132,3 +150,14 @@ body {
     padding: 0.3em;
 
 }
+.navbar-element:hover .nav-text::after {
+    transform: scaleX(1);
+}
+
+.banner-publicidad{
+    background-color: red;
+    width: 90%;
+    height: 30vh;
+    margin: 0 auto;
+}
+
