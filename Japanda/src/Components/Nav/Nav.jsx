@@ -1,5 +1,7 @@
 import React from 'react'
 import logo from "../../Images/head_logo.png";
+import banner1 from "../../Images/banner1.png";
+import banner2 from "../../Images/banner2.png";
 
 function Nav() {
     return (
@@ -73,7 +75,9 @@ function Nav() {
                     </div>
                 </nav>
             </div>
-            <div className="banner-publicidad"></div>
+            <div className="banner-publicidad">
+                <img src={banner2} alt="Banner 1" className='banner-ad'/>
+            </div>
 
 
         </>
