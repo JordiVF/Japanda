@@ -1,1 +1,134 @@
 @import url('https://fonts.googleapis.com/css2?family=LINE+Seed+JP&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    font-family: "Josefin Sans", sans-serif;
+    scroll-behavior: smooth;
+
+}
+
+body {
+    background-color: var(--cream);
+}
+
+:root {
+    --prim-color: #e34f1d;
+    --sec-color: #281a0f;
+    --black: #111111;
+    --cream: #fdefcc;
+    --nav: #FFF8E8;
+    --acc-color: #f64f1a;
+    --text-color: #7e7e7e;
+
+}
+
+.navbar-wrapper {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    /* logo | resto */
+    grid-template-rows: auto auto;
+    /* buscador | nav */
+    background-color: var(--nav);
+    width: 100%;
+    padding: 0 1em;
+}
+
+.navbar {
+    background-color: var(--nav);
+    height: 10vh;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    grid-column: span 4 / span 4;
+    grid-column-start: 2;
+    grid-row-start: 2;
+}
+
+.input-buscador {
+    background-color: #FFFEFA;
+    padding: 0.4em;
+    border: 1px solid grey;
+    border-radius: 1em;
+    width: 40%;
+    padding-left: 2em;
+}
+
+
+.navbar-element {
+    text-decoration: none;
+    color: var(--prim-color);
+    padding: 1.6vw;
+    font-weight: 500;
+
+
+}
+
+
+.tag-new {
+    background-color: transparent;
+    font-size: 0.5em;
+    color: #008000;
+    font-weight: bold;
+    align-items: start;
+    position: absolute;
+    margin: -0.5vh -1vh;
+}
+
+.logo-navbar {
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+
+    width: 7em;
+    height: 8em;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    object-fit: contain;
+}
+
+
+
+.search-svg {
+    width: 1rem;
+    font-weight: bold;
+    position: absolute;
+    margin-left: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+.navbar-svg-element-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.side-container {
+    align-items: center;
+    margin: 2em;
+    display: flex;
+}
+
+.navbar-svg-element {
+    width: 1.7em;
+
+}
+
+
+.nav-searchbar {
+    padding-top: 1em;
+    text-align: center;
+}
+
+.navbar-svg-element-wrapper a {
+    padding: 0.3em;
+
+}
