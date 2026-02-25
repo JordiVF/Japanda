@@ -14,6 +14,49 @@ const getProductos = async (req, res) => {
   }
 };
 
+const postProductos = async (req, res) => {
+  try {
+    const {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      imagen_url,
+      activo,
+      id_categoria,
+      id_subcategoria,
+      nuevo_booleano
+    } = req.body;
+
+    const { data, error } = await supabase
+      .from('productos')
+      .insert([
+        {
+          nombre,
+          descripcion,
+          precio,
+          stock,
+          imagen_url,
+          activo,
+          id_categoria,
+          id_subcategoria,
+          nuevo_booleano
+        }
+      ])
+      .select();
+
+    if (error) throw error;
+
+    res.status(201).json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Error al crear producto',
+      details: error.message
+    });
+  }
+};
+
 module.exports = {
-  getProductos
+  getProductos,
+  postProductos
 };
