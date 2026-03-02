@@ -1,9 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import logo from "../../Images/head_logo.png";
 import banner1 from "../../Images/banner1.png";
 import banner2 from "../../Images/banner2.png";
+import banner3 from "../../Images/banner3.png";
 
 function Nav() {
+    const [currentBanner, setCurrentBanner] = useState(0);
+    const banners = [banner1, banner2, banner3];
+
+    // Auto-cambio de banner cada 10 segundos
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentBanner((prev) => (prev + 1) % banners.length);
+        }, 7000);
+
+        return () => clearInterval(interval);
+    }, [banners.length, currentBanner]);
+
+    // Función para cambiar banner manualmente
+    const handleBannerChange = (index) => {
+        setCurrentBanner(index);
+    };
+
     return (
         <>
 
@@ -75,11 +93,48 @@ function Nav() {
                     </div>
                 </nav>
             </div>
-            <div className="banner-publicidad">
-                <img src={banner2} alt="Banner 1" className='banner-ad'/>
+
+
+            <div className="banner-carousel">
+                <div className="banner-container">
+                    <div
+                        className="banner-track"
+                        style={{
+                            transform: `translateX(-${currentBanner * 100}%)`
+                        }}
+                    >
+                        {banners.map((banner, index) => (
+                            <div className="banner-slide" key={index}>
+                                <img
+                                    src={banner}
+                                    alt={`Banner ${index + 1}`}
+                                    className="banner-ad"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+
+                {/* Controles del carrusel */}
+                <div className="carousel-controls">
+                    <button
+                        className={`carousel-dot ${currentBanner === 0 ? 'active' : ''}`}
+                        onClick={() => handleBannerChange(0)}
+                        aria-label="Banner 1"
+                    />
+                    <button
+                        className={`carousel-dot ${currentBanner === 1 ? 'active' : ''}`}
+                        onClick={() => handleBannerChange(1)}
+                        aria-label="Banner 2"
+                    />
+                    <button
+                        className={`carousel-dot ${currentBanner === 2 ? 'active' : ''}`}
+                        onClick={() => handleBannerChange(2)}
+                        aria-label="Banner 3"
+                    />
+                </div>
             </div>
-
-
         </>
     )
 }

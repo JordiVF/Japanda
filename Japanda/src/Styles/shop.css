@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap');
+
+:root {
+    --prim-color: #e34f1d;
+    --sec-color: #281a0f;
+    --black: #111111;
+    --cream: #fdefcc;
+    --nav: #FFF8E8;
+    --acc-color: #f64f1a;
+    --text-color: #7e7e7e;
+
+}
+
+.shop {
+    margin-top: 2em;
+    border-top: 2px solid var(--prim-color);
+}
+
+
+.shop-title {
+    padding-top: 0.3em;
+    text-align: center;
+    font-size: 3em;
+    color: var(--prim-color);
+    font-weight: 500;
+
+}
+
+.product-grid{
+    display: flex;
+}
+
+.product-grid img{
+    height: 25vh;
+    width: 10vw;
+}
