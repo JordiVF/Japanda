@@ -11,11 +11,14 @@ function ProductCard({ product }) {
 
             <div className="product-info">
                 <h3 className="product-name">{product.nombre}</h3>
-                <p className="product-price">{product.precio} €</p>
-                <button className="product-button">
-                    Añadir al carrito
-                </button>
+                <div>
+                    <hr />
+                    <p className="product-price">{product.precio.toFixed(2)} €</p>
+                </div>
             </div>
+            <button className="product-button">
+                Añadir al carrito
+            </button>
         </article>
     );
 }

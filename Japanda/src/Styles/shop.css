@@ -23,11 +23,15 @@
     font-size: 3em;
     color: var(--prim-color);
     font-weight: 500;
+    margin: 3vh 0;
 
 }
 
 .product-grid{
-    display: flex;
+  display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 4 productos por fila */
+    gap: 1vh;
+    padding: 1vh;
 }
 
 .product-grid img{

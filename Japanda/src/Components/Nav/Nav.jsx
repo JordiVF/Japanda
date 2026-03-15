@@ -36,9 +36,23 @@ function Nav() {
                 </div>
                 <nav className="navbar">
 
-                    <a href="#" className='navbar-element'>
-                        <span className="nav-text">Alimentación</span>
-                    </a>
+                    <div className="navbar-item-wrapper">
+                        <a href="#" className='navbar-element'>
+                            <span className="nav-text">
+                                Alimentación&nbsp;
+                                <svg className="svgFlecha" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.5 3.8501L6.65 10.0001C6.69489 10.0479 6.74911 10.0861 6.80931 10.1121C6.8695 10.1382 6.9344 10.1516 7 10.1516C7.0656 10.1516 7.1305 10.1382 7.19069 10.1121C7.25089 10.0861 7.30511 10.0479 7.35 10.0001L13.5 3.8501" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            </span>
+                        </a>
+                        <div className="dropdown-menu">
+                            <a href="#" className="dropdown-item">Snacks</a>
+                            <a href="#" className="dropdown-item">Dulces</a>
+                            <a href="#" className="dropdown-item">Salados</a>
+                            <a href="#" className="dropdown-item">Bebidas</a>
+                            <a href="#" className="dropdown-item">Ramen</a>
+                        </div>
+                    </div>
                     <a href="#" className='navbar-element'>
                         <span className="nav-text">Decoración</span>
                     </a>
