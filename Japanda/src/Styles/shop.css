@@ -13,7 +13,6 @@
 
 .shop {
     margin-top: 2em;
-    border-top: 2px solid var(--prim-color);
 }
 
 
@@ -23,7 +22,7 @@
     font-size: 3em;
     color: var(--prim-color);
     font-weight: 500;
-    margin: 3vh 0;
+    margin: 4vh 0;
 
 }
 
@@ -37,4 +36,9 @@
 .product-grid img{
     height: 25vh;
     width: 10vw;
+}
+
+hr{
+    border: 1px solid var(--prim-color);
+    margin: 4vh 0;
 }

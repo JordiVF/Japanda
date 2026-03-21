@@ -112,6 +112,11 @@ body {
     justify-content: center;
 
     object-fit: contain;
+
+}
+
+.logo-navbar:hover {
+    cursor: pointer;
 }
 
 
@@ -131,7 +136,7 @@ body {
     width: 100%;
 
     .navbar-element {
-        margin: 0   ;
+        margin: 0;
     }
 }
 
@@ -251,54 +256,55 @@ body {
 }
 
 .navbar-item-wrapper {
-  position: relative;
+    position: relative;
 }
 
 .svgFlecha {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 4px;
-  color: var(--prim-color);
-  transition: transform 0.25s ease;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: var(--prim-color);
+    transition: transform 0.25s ease;
 }
 
 .navbar-item-wrapper:hover .svgFlecha {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--nav);
-  border: 1px solid #eee;
-  border-radius: 8px;
-  min-width: 160px;
-  padding: 8px 0;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  z-index: 100;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--nav);
+    border: 1px solid #eee;
+    border-radius: 8px;
+    min-width: 160px;
+    padding: 8px 0;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    z-index: 100;
+    border: solid 1px var(--prim-color);
 }
 
 .navbar-item-wrapper:hover .dropdown-menu {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .dropdown-item {
-  display: block;
-  padding: 8px 16px;
-  color: #333;
-  text-decoration: none;
-  font-size: 14px;
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
 }
 
 .dropdown-item:hover {
-  background: #faf0d9;
-  color: #e34f1d;
+    background: #faf0d9;
+    color: #e34f1d;
 }
 
 @media (max-width: 768px) {

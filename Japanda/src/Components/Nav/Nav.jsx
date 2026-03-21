@@ -5,6 +5,10 @@ import banner2 from "../../Images/banner2.png";
 import banner3 from "../../Images/banner3.png";
 
 function Nav() {
+
+    const link = () => {
+        window.location.href = '/'
+    }
     const [currentBanner, setCurrentBanner] = useState(0);
     const banners = [banner1, banner2, banner3];
 
@@ -26,7 +30,7 @@ function Nav() {
         <>
 
             <div className="navbar-wrapper">
-                <img src={logo} alt="Logo Japanda" className='logo-navbar' />
+                    <img src={logo} alt="Logo Japanda" className='logo-navbar' onClick={link}/>
 
                 <div className="nav-searchbar">
                     <svg xmlns="http://www.w3.org/2000/svg" className='search-svg' viewBox="0 0 24 24" fill="none">
@@ -37,11 +41,11 @@ function Nav() {
                 <nav className="navbar">
 
                     <div className="navbar-item-wrapper">
-                        <a href="#" className='navbar-element'>
+                        <a href="/Alimentacion" className='navbar-element'>
                             <span className="nav-text">
                                 Alimentación&nbsp;
                                 <svg className="svgFlecha" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M0.5 3.8501L6.65 10.0001C6.69489 10.0479 6.74911 10.0861 6.80931 10.1121C6.8695 10.1382 6.9344 10.1516 7 10.1516C7.0656 10.1516 7.1305 10.1382 7.19069 10.1121C7.25089 10.0861 7.30511 10.0479 7.35 10.0001L13.5 3.8501" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <path d="M0.5 3.8501L6.65 10.0001C6.69489 10.0479 6.74911 10.0861 6.80931 10.1121C6.8695 10.1382 6.9344 10.1516 7 10.1516C7.0656 10.1516 7.1305 10.1382 7.19069 10.1121C7.25089 10.0861 7.30511 10.0479 7.35 10.0001L13.5 3.8501" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </span>
                         </a>
