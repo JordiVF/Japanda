@@ -1,13 +1,16 @@
-import Nav from "../Nav/Nav";
 import Shop from "./Shop";
 import Secciones from "../Additionals/Secciones";
+import TextToShow from "../Additionals/TextToShow";
 
 function Alimentacion() {
 
-            <Nav />
+
     return (
         <>
-            <Secciones secciones = {['Snack', 'Bebidas', 'Salado', 'Dulce']} />
+            <TextToShow categoriaId={1} />
+
+            <Secciones secciones={['Snack', 'Bebidas', 'Salado', 'Dulce']} />
+
             <Shop categoriaId={1} />
         </>
     );

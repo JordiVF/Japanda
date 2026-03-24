@@ -16,7 +16,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0 1vh ;
+    padding: 0 1vh;
 }
 
 .product-price {
@@ -25,7 +25,8 @@
     font-weight: bold;
     font-size: 1.2em;
 }
-img{
+
+img {
     border-radius: 1em;
 }
 
@@ -42,7 +43,7 @@ hr {
     background-color: white;
 }
 
-.product-button{
+button{
     background-color: #e34f1d;
     color: white;
     border: none;
@@ -51,19 +52,12 @@ hr {
     border-radius: 5px;
 }
 
-.product-button{
-    background-color: #e34f1d;
-    color: white;
-    border: none;
-    padding: 10px;
-    margin-bottom: 2vh;
-    border-radius: 5px;
-}
-
-.product-button:hover{
+button:hover {
     background-color: #f64f1a;
     color: #FFF8E8;
     transform: scale(1.1);
     transition: 0.3s;
     cursor: pointer;
 }
+
+

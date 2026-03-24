@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import '../../Styles/shop.css'
+import '../../Styles/shop.css';
 import ProductCard from "../Pages/ProductCard";
 import { supabase } from "../../supabaseClient";
 import TextToShow from "../Additionals/TextToShow";
@@ -7,8 +7,6 @@ import TextToShow from "../Additionals/TextToShow";
 function Shop({ categoriaId }) {
 
     const [products, setProducts] = useState([]);
-
-
     useEffect(() => {
         const fetchProducts = async () => {
             let query = supabase.from("productos").select("*");
@@ -31,16 +29,20 @@ function Shop({ categoriaId }) {
 
     return (
         <section className="shop">
-            {TextToShow(categoriaId)}
+            
+            {categoriaId !== 1 && <TextToShow categoriaId={categoriaId} />}
 
             <div className="product-grid">
                 {products.map(producto => (
-                    <ProductCard key={producto.id_producto} product={producto} />
+                    <ProductCard 
+                        key={producto.id_producto} 
+                        product={producto} 
+                    />
                 ))}
             </div>
+
         </section>
     );
 }
-
 
 export default Shop;

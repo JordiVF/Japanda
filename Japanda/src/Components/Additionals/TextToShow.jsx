@@ -1,20 +1,17 @@
 import "../../Styles/shop.css";
-import Alimentacion from "../Pages/Alimentacion";
 
-function TextToShow(categoriaId) {
-    // let defaultText = "Tienda Online de Productos Japoneses";
+function TextToShow({ categoriaId }) {
     let text = ChangeText(categoriaId);
 
     return (
         <>
             <h2 className="shop-title">
                 {text}
-                <hr />
+                <hr className="hrTienda"/>
             </h2>
         </>
     );
 }
-
 function ChangeText(categoriaId) {
     switch (categoriaId) {
         case 1:

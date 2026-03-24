@@ -16,9 +16,16 @@ function ProductCard({ product }) {
                     <p className="product-price">{product.precio.toFixed(2)} €</p>
                 </div>
             </div>
-            <button className="product-button">
-                Añadir al carrito
-            </button>
+
+            <div className="product-controllers">
+
+                <button className="product-button">
+                    Añadir al carrito
+                </button>
+
+
+            </div>
+
         </article>
     );
 }

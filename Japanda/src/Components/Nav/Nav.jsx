@@ -57,7 +57,7 @@ function Nav() {
                             <a href="#" className="dropdown-item">Ramen</a>
                         </div>
                     </div>
-                    <a href="#" className='navbar-element'>
+                    <a href="/Decoracion" className='navbar-element'>
                         <span className="nav-text">Decoración</span>
                     </a>
                     <a href="#" className='navbar-element'>
