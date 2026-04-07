@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/JordiVF/Japanda#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.93.3",
+    "@supabase/supabase-js": "^2.102.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
