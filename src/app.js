@@ -9,6 +9,7 @@ const subcategoriasRoutes = require('./routes/subcategoriasRoutes');
 const pedidosRoutes = require('./routes/pedidosRoutes');
 const detallesPedidosRoutes = require('./routes/detallesPedidosRoutes');
 const enviosRoutes = require('./routes/enviosRoutes');
+const carritoRoutes = require('./routes/carritoRoutes');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/subcategorias', subcategoriasRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use('/api/detallespedidos', detallesPedidosRoutes);
 app.use('/api/envios', enviosRoutes);
+app.use('/api/carrito', carritoRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
