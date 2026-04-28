@@ -43,7 +43,7 @@ hr {
     background-color: white;
 }
 
-button{
+.product-button{
     background-color: #e34f1d;
     color: white;
     border: none;
@@ -52,7 +52,7 @@ button{
     border-radius: 5px;
 }
 
-button:hover {
+.product-button:hover {
     background-color: #f64f1a;
     color: #FFF8E8;
     transform: scale(1.1);

@@ -1,6 +1,9 @@
 import "../../Styles/ProductCard.css";
+import { useCart } from "../Context/useCart";
 
 function ProductCard({ product }) {
+    const { addToCart } = useCart();
+
     return (
         <article className="product-card">
             <img
@@ -18,12 +21,12 @@ function ProductCard({ product }) {
             </div>
 
             <div className="product-controllers">
-
-                <button className="product-button">
+                <button
+                    className="product-button"
+                    onClick={() => addToCart(product)}
+                >
                     Añadir al carrito
                 </button>
-
-
             </div>
 
         </article>
