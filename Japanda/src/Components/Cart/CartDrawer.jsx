@@ -1,21 +1,25 @@
+import { useState } from "react";
 import { useCart } from "../Context/useCart";
 import "../../Styles/CartDrawer.css";
 
 function CartDrawer() {
-    const { cartItems, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
+    const { cartItems, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, clearCart, totalPrice, totalItems } = useCart();
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    const handleClearCart = () => {
+        clearCart();
+        setShowConfirm(false);
+    };
 
     return (
         <>
-            {/* Overlay oscuro */}
             <div
                 className={`cart-overlay ${isCartOpen ? "cart-overlay--visible" : ""}`}
-                onClick={() => setIsCartOpen(false)}
+                onClick={() => { setIsCartOpen(false); setShowConfirm(false); }}
             />
 
-            {/* Drawer */}
             <aside className={`cart-drawer ${isCartOpen ? "cart-drawer--open" : ""}`}>
 
-                {/* Header */}
                 <div className="cart-header">
                     <div className="cart-header__title">
                         <span className="cart-header__icon">🛒</span>
@@ -24,7 +28,7 @@ function CartDrawer() {
                             <span className="cart-badge">{totalItems}</span>
                         )}
                     </div>
-                    <button className="cart-close-btn" onClick={() => setIsCartOpen(false)}>
+                    <button className="cart-close-btn" onClick={() => { setIsCartOpen(false); setShowConfirm(false); }}>
                         ✕
                     </button>
                 </div>
@@ -69,7 +73,6 @@ function CartDrawer() {
                     )}
                 </div>
 
-                {/* Footer */}
                 {cartItems.length > 0 && (
                     <div className="cart-footer">
                         <div className="cart-total">
@@ -80,9 +83,23 @@ function CartDrawer() {
                             Finalizar compra →
                         </button>
 
-                        <button className="cart-clean-btn">
-                            Limpiar carrito
-                        </button>
+                        {showConfirm ? (
+                            <div className="cart-confirm">
+                                <p>¿Seguro que quieres vaciar el carrito?</p>
+                                <div className="cart-confirm__btns">
+                                    <button className="cart-confirm__yes" onClick={handleClearCart}>
+                                        Sí, vaciar
+                                    </button>
+                                    <button className="cart-confirm__no" onClick={() => setShowConfirm(false)}>
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <button className="cart-clean-btn" onClick={() => setShowConfirm(true)}>
+                                Limpiar carrito
+                            </button>
+                        )}
                     </div>
                 )}
             </aside>

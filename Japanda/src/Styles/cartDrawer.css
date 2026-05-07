@@ -289,12 +289,87 @@
     border-radius: 4px;
 }
 
-.cart-clean-btn{
+.cart-clean-btn {
     background-color: #ed3232;
+    border: none;
     border-radius: 1em;
-    margin: 1vh;
+    margin: 0;
     text-align: center;
     color: white;
     padding: 10px;
+    width: 100%;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
 }
 
+.cart-clean-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+.cart-clean-btn:active {
+    transform: translateY(0);
+}
+
+/* ── Confirm clear ── */
+.cart-confirm {
+    background: #fff8f0;
+    border: 1.5px solid #f0c080;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cart-confirm p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7a4a00;
+    text-align: center;
+}
+
+.cart-confirm__btns {
+    display: flex;
+    gap: 8px;
+}
+
+.cart-confirm__yes,
+.cart-confirm__no {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.cart-confirm__yes {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.cart-confirm__yes:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+.cart-confirm__no {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.cart-confirm__no:hover {
+    background: #ddd;
+}
