@@ -1,42 +1,51 @@
 import { useEffect, useState } from "react";
 import '../../Styles/shop.css';
 import ProductCard from "../Pages/ProductCard";
-import { supabase } from "../../supabaseClient";
 import TextToShow from "../Additionals/TextToShow";
 
 function Shop({ categoriaId }) {
 
     const [products, setProducts] = useState([]);
+
     useEffect(() => {
+
         const fetchProducts = async () => {
-            let query = supabase.from("productos").select("*");
+            try {
 
-            if (categoriaId) {
-                query = query.eq("id_categoria", categoriaId);
-            }
+                let url = "http://localhost:3000/api/productos";
 
-            const { data, error } = await query;
+                if (categoriaId) {
+                    url += `?id_categoria=${categoriaId}`;
+                }
 
-            if (error) {
-                console.error(error);
-            } else {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data?.error || "Error cargando productos");
+                }
+
                 setProducts(data);
+
+            } catch (error) {
+                console.error("Error fetching products:", error);
             }
         };
 
         fetchProducts();
+
     }, [categoriaId]);
 
     return (
         <section className="shop">
-            
+
             {categoriaId !== 1 && <TextToShow categoriaId={categoriaId} />}
 
             <div className="product-grid">
                 {products.map(producto => (
-                    <ProductCard 
-                        key={producto.id_producto} 
-                        product={producto} 
+                    <ProductCard
+                        key={producto.id_producto}
+                        product={producto}
                     />
                 ))}
             </div>
