@@ -9,7 +9,7 @@ function Alimentacion() {
         <>
             <TextToShow categoriaId={1} />
 
-            <Secciones secciones={['Snack', 'Bebidas', 'Salado', 'Dulce', 'Ramen']} />
+            <Secciones secciones={['Snack', 'Bebidas', 'Salado', 'Dulce', 'Ramen', ]} />
 
             <Shop categoriaId={1} />
         </>

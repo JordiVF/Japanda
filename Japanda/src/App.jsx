@@ -9,6 +9,7 @@ import Moda from "./Components/Pages/Moda";
 import Inciensos from "./Components/Pages/Inciensos";
 import { CartProvider } from "./Components/Context/CartContext.jsx";
 import CartDrawer from "./Components/Cart/CartDrawer";
+import Auth from "./Components/Pages/Auth.jsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Merchandising" element={<Merchandising />} />
           <Route path="/Moda" element={<Moda />} />
           <Route path="/Inciensos" element={<Inciensos />} />
+          <Route path="/Auth" element={<Auth />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
