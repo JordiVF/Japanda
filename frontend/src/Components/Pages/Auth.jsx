@@ -1,128 +1,238 @@
 import { useState } from "react";
-import { supabase } from "../../supabaseClient";
-import { sha256 } from "js-sha256";
 import "../../Styles/auth.css";
 
+const API = "http://localhost:3000";
+
 function Auth() {
-    const [isLogin, setIsLogin] = useState(true);
-    const [formData, setFormData] = useState({
-        identifier: "",
+    const [mode, setMode] = useState("login"); // "login" | "register"
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
+    const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+    const [registerForm, setRegisterForm] = useState({
+        nombre: "",
         email: "",
         password: "",
-        nombre: "",
-        telefono: ""
+        telefono: "",
+        direccion: "",
+        ciudad: "",
+        pais: "",
     });
-    const [error, setError] = useState(null);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleLoginChange = (e) => {
+        setLoginForm({ ...loginForm, [e.target.name]: e.target.value });
+        setError("");
+    };
+
+    const handleRegisterChange = (e) => {
+        setRegisterForm({ ...registerForm, [e.target.name]: e.target.value });
+        setError("");
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(null);
-        const passwordHash = sha256(formData.password);
-
-        const { data, error: fetchError } = await supabase
-            .from("usuarios")
-            .select("*")
-            .or(`email.eq.${formData.identifier},telefono.eq.${formData.identifier}`)
-            .eq("password_hash", passwordHash)
-            .single();
-
-        if (fetchError || !data) {
-            setError("Credenciales incorrectas. Revisa tu email/teléfono o contraseña.");
-        } else {
-            console.log("Sesión iniciada:", data);
-            localStorage.setItem("userRole", data.rol);
-            window.location.href = data.rol === "admin" ? "/admin" : "/";
+        setLoading(true);
+        setError("");
+        try {
+            console.log(`${API}`, 'HOLAAAAAAAA 😅😅😅😅😅😅😅😅😅😅😅😅😅😅');
+            const res = await fetch(`${API}/api/usuarios/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(loginForm),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al iniciar sesión");
+            setSuccess("¡Bienvenido de vuelta, " + data.data.nombre + "!");
+            // Aquí puedes guardar el usuario en contexto/localStorage
+            // localStorage.setItem("usuario", JSON.stringify(data.data));
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setError(null);
-        const passwordHash = sha256(formData.password);
-
-        const { data, error: regError } = await supabase
-            .from("usuarios")
-            .insert([
-                {
-                    nombre: formData.nombre,
-                    email: formData.email,
-                    password_hash: passwordHash,
-                    telefono: formData.telefono,
-                    rol: "cliente" 
-                }
-            ]);
-
-        if (regError) {
-            setError("Error en el registro: " + regError.message);
-        } else {
-            alert("Cuenta creada con éxito");
-            setIsLogin(true);
+        setLoading(true);
+        setError("");
+        try {
+            const res = await fetch(`${API}/api/usuarios`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(registerForm),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al registrarse");
+            setSuccess("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
+            setMode("login");
+            setRegisterForm({ nombre: "", email: "", password: "", telefono: "", direccion: "", ciudad: "", pais: "" });
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="auth-container">
+        <div className="auth-page">
             <div className="auth-card">
-                <h1 className="auth-title">{isLogin ? "Bienvenido" : "Crear Cuenta"}</h1>
-                
-                <div className="auth-toggle">
-                    <button 
-                        className={isLogin ? "active" : ""} 
-                        onClick={() => setIsLogin(true)}
-                    >Login</button>
-                    <button 
-                        className={!isLogin ? "active" : ""} 
-                        onClick={() => setIsLogin(false)}
-                    >Registro</button>
+                <div className="auth-header">
+                    <h1 className="auth-title">
+                        {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
+                    </h1>
+                    <p className="auth-subtitle">
+                        {mode === "login"
+                            ? "Accede a tu cuenta de Japanda"
+                            : "Únete a la comunidad Japanda"}
+                    </p>
                 </div>
 
-                <form onSubmit={isLogin ? handleLogin : handleRegister} className="auth-form">
-                    {error && <p className="auth-error">{error}</p>}
+                <div className="auth-tabs">
+                    <button
+                        className={`auth-tab ${mode === "login" ? "active" : ""}`}
+                        onClick={() => { setMode("login"); setError(""); setSuccess(""); }}
+                    >
+                        Login
+                    </button>
+                    <button
+                        className={`auth-tab ${mode === "register" ? "active" : ""}`}
+                        onClick={() => { setMode("register"); setError(""); setSuccess(""); }}
+                    >
+                        Registro
+                    </button>
+                </div>
 
-                    {!isLogin && (
-                        <div className="input-group">
-                            <label>Nombre Completo</label>
-                            <input type="text" name="nombre" onChange={handleChange} />
-                        </div>
-                    )}
+                {error && <div className="auth-alert auth-alert--error">{error}</div>}
+                {success && <div className="auth-alert auth-alert--success">{success}</div>}
 
-                    {isLogin ? (
-                        <div className="input-group">
-                            <label>Email o Teléfono</label>
-                            <input 
-                                type="text" 
-                                name="identifier" 
-                                required 
-                                onChange={handleChange} 
-                                placeholder="ejemplo@mail.com o 600000000"
+                {mode === "login" ? (
+                    <form className="auth-form" onSubmit={handleLogin}>
+                        <div className="auth-field">
+                            <label className="auth-label">Email</label>
+                            <input
+                                className="auth-input"
+                                type="email"
+                                name="email"
+                                placeholder="tu@email.com"
+                                value={loginForm.email}
+                                onChange={handleLoginChange}
+                                required
                             />
                         </div>
-                    ) : (
-                        <>
-                            <div className="input-group">
-                                <label>Email</label>
-                                <input type="email" name="email" required onChange={handleChange} />
-                            </div>
-                            <div className="input-group">
-                                <label>Teléfono</label>
-                                <input type="text" name="telefono" onChange={handleChange} />
-                            </div>
-                        </>
-                    )}
+                        <div className="auth-field">
+                            <label className="auth-label">Contraseña</label>
+                            <input
+                                className="auth-input"
+                                type="password"
+                                name="password"
+                                placeholder="Mínimo 8 caracteres"
+                                value={loginForm.password}
+                                onChange={handleLoginChange}
+                                required
+                            />
+                        </div>
+                        <button className="auth-submit" type="submit" disabled={loading}>
+                            {loading ? "Entrando..." : "Entrar"}
+                        </button>
+                    </form>
+                ) : (
+                    <form className="auth-form" onSubmit={handleRegister}>
+                        <div className="auth-field">
+                            <label className="auth-label">Nombre *</label>
+                            <input
+                                className="auth-input"
+                                type="text"
+                                name="nombre"
+                                placeholder="Tu nombre"
+                                value={registerForm.nombre}
+                                onChange={handleRegisterChange}
+                                required
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label className="auth-label">Email *</label>
+                            <input
+                                className="auth-input"
+                                type="email"
+                                name="email"
+                                placeholder="tu@email.com"
+                                value={registerForm.email}
+                                onChange={handleRegisterChange}
+                                required
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label className="auth-label">Contraseña *</label>
+                            <input
+                                className="auth-input"
+                                type="password"
+                                name="password"
+                                placeholder="Mínimo 8 caracteres"
+                                value={registerForm.password}
+                                onChange={handleRegisterChange}
+                                required
+                            />
+                        </div>
 
-                    <div className="input-group">
-                        <label>Contraseña</label>
-                        <input type="password" name="password" required onChange={handleChange} />
-                    </div>
+                        <div className="auth-divider">
+                            <span>Datos opcionales</span>
+                        </div>
 
-                    <button type="submit" className="auth-submit-btn">
-                        {isLogin ? "Entrar" : "Registrarse"}
-                    </button>
-                </form>
+                        <div className="auth-grid">
+                            <div className="auth-field">
+                                <label className="auth-label">Teléfono</label>
+                                <input
+                                    className="auth-input"
+                                    type="tel"
+                                    name="telefono"
+                                    placeholder="+34 600 000 000"
+                                    value={registerForm.telefono}
+                                    onChange={handleRegisterChange}
+                                />
+                            </div>
+                            <div className="auth-field">
+                                <label className="auth-label">Ciudad</label>
+                                <input
+                                    className="auth-input"
+                                    type="text"
+                                    name="ciudad"
+                                    placeholder="Madrid"
+                                    value={registerForm.ciudad}
+                                    onChange={handleRegisterChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="auth-field">
+                            <label className="auth-label">Dirección</label>
+                            <input
+                                className="auth-input"
+                                type="text"
+                                name="direccion"
+                                placeholder="Calle, número, piso..."
+                                value={registerForm.direccion}
+                                onChange={handleRegisterChange}
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label className="auth-label">País</label>
+                            <input
+                                className="auth-input"
+                                type="text"
+                                name="pais"
+                                placeholder="España"
+                                value={registerForm.pais}
+                                onChange={handleRegisterChange}
+                            />
+                        </div>
+
+                        <button className="auth-submit" type="submit" disabled={loading}>
+                            {loading ? "Creando cuenta..." : "Crear cuenta"}
+                        </button>
+                    </form>
+                )}
             </div>
         </div>
     );
