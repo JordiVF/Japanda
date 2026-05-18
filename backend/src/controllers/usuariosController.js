@@ -50,7 +50,7 @@ const createUsuario = async (req, res) => {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
-    const { data: existingUser, error: checkError } = await supabase
+    const { data: existingUser } = await supabase
       .from('usuarios')
       .select('id_usuario')
       .eq('email', email)
@@ -82,6 +82,37 @@ const createUsuario = async (req, res) => {
     res.status(201).json({ message: 'Usuario creado exitosamente', data: data[0] });
   } catch (error) {
     res.status(500).json({ error: 'Error al crear usuario', details: error.message });
+  }
+};
+
+const loginUsuario = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email y password son requeridos' });
+    }
+
+    const { data: usuario, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error || !usuario) {
+      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, usuario.password_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    }
+
+    const { password_hash, ...usuarioSinPassword } = usuario;
+    res.status(200).json({ message: 'Login exitoso', data: usuarioSinPassword });
+
+  } catch (error) {
+    res.status(500).json({ error: 'Error al iniciar sesión', details: error.message });
   }
 };
 
@@ -210,6 +241,7 @@ module.exports = {
   getUsuarios,
   getUsuarioById,
   createUsuario,
+  loginUsuario,
   updateUsuario,
   changePassword,
   deleteUsuario
