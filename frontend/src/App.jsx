@@ -10,24 +10,31 @@ import Inciensos from "./Components/Pages/Inciensos";
 import { CartProvider } from "./Components/Context/CartContext.jsx";
 import CartDrawer from "./Components/Cart/CartDrawer";
 import Auth from "./Components/Pages/Auth.jsx";
+import { AuthProvider } from "./Components/Additionals/AuthContext";
 
 function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <Nav />
-        <CartDrawer />
-        <Routes>
-          <Route path="/" element={<Shop />} />
-          <Route path="/Alimentacion" element={<Alimentacion />} />
-          <Route path="/Decoracion" element={<Decoracion />} />
-          <Route path="/Merchandising" element={<Merchandising />} />
-          <Route path="/Moda" element={<Moda />} />
-          <Route path="/Inciensos" element={<Inciensos />} />
-          <Route path="/Auth" element={<Auth />} />
-        </Routes>
-      </BrowserRouter>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <BrowserRouter>
+
+          <Nav />
+
+          <CartDrawer />
+
+          <Routes>
+            <Route path="/" element={<Shop />} />
+            <Route path="/Alimentacion" element={<Alimentacion />} />
+            <Route path="/Decoracion" element={<Decoracion />} />
+            <Route path="/Merchandising" element={<Merchandising />} />
+            <Route path="/Moda" element={<Moda />} />
+            <Route path="/Inciensos" element={<Inciensos />} />
+            <Route path="/Auth" element={<Auth />} />
+          </Routes>
+
+        </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

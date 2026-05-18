@@ -69,6 +69,24 @@ body {
     align-items: center;
 }
 
+.navbar-element-admin{
+    text-decoration: none;
+    color: blue;
+    font-weight: 400;   
+    font-size: 1em;
+    align-self: center;
+    background-color: lightblue;
+    padding: 0.5em;
+    border-radius: 0.6em;
+    border: 1px solid grey;
+
+}
+
+.navbar-element-admin:hover{
+    background-color: lightskyblue;
+    transform: scale(110%);
+}
+
 
 .nav-text {
     position: relative;
