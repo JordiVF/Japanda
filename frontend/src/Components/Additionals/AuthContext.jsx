@@ -1,23 +1,50 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos en ms
 
+export function AuthProvider({ children }) {
     const [user, setUser] = useState(() => {
-        const stored = localStorage.getItem("usuario");
+        const stored = sessionStorage.getItem("usuario");
         return stored ? JSON.parse(stored) : null;
     });
 
+    const timerRef = useRef(null);
+
+    const logout = useCallback(() => {
+        setUser(null);
+        sessionStorage.removeItem("usuario");
+        clearTimeout(timerRef.current);
+    }, []);
+
+    const resetTimer = useCallback(() => {
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+            logout();
+        }, INACTIVITY_LIMIT);
+    }, [logout]);
+
     const login = (data) => {
         setUser(data);
-        localStorage.setItem("usuario", JSON.stringify(data));
+        sessionStorage.setItem("usuario", JSON.stringify(data));
+        resetTimer();
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("usuario");
-    };
+    // Escuchar eventos de actividad del usuario
+    useEffect(() => {
+        if (!user) return;
+
+        const eventos = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+
+        eventos.forEach(ev => window.addEventListener(ev, resetTimer));
+        resetTimer(); // Arranca el timer al hacer login
+
+        return () => {
+            eventos.forEach(ev => window.removeEventListener(ev, resetTimer));
+            clearTimeout(timerRef.current);
+        };
+    }, [user, resetTimer]);
 
     return (
         <AuthContext.Provider value={{ user, login, logout }}>

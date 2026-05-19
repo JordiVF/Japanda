@@ -361,3 +361,10 @@ body {
     text-align: center;
     margin: 5px;
 }
+
+.imagenUsuario{
+    border-radius: 50px;
+    height: 50px;
+    width: 50px;
+    border: 2px solid var(--prim-color);
+}

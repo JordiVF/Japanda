@@ -4,9 +4,9 @@ import "../../Styles/auth.css";
 
 const API = "http://localhost:3000";
 
-function Auth() {
+function Auth({ onClose }) {
     const { login } = useAuth();
-    const [mode, setMode] = useState("login"); // "login" | "register"
+    const [mode, setMode] = useState("login");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -38,7 +38,7 @@ function Auth() {
         setLoading(true);
         setError("");
         setSuccess("");
-        
+
         try {
             const res = await fetch(`${API}/api/usuarios/login`, {
                 method: "POST",
@@ -47,29 +47,14 @@ function Auth() {
             });
 
             const data = await res.json();
-            console.log(res, '☀️☀️☀️☀️🕶️🕶️🕶️☀️☀️☀️☀️');
-            console.log(JSON.stringify(data, null, 2));
-            if (!res.ok) {
-                throw new Error(data.error || "Error al iniciar sesión");
-            }
-            
+            if (!res.ok) throw new Error(data.error || "Error al iniciar sesión");
+
             login(data.data);
-
-
-            // Guardar usuario en localStorage
-            localStorage.setItem("usuario", JSON.stringify(data.data));
-            localStorage.setItem("usuarioEmail", data.data.email);
-
             setSuccess(`¡Bienvenido de vuelta, ${data.data.nombre}!`);
-
-            // Limpiar formulario
             setLoginForm({ email: "", password: "" });
 
-            // Redirigir después de 1.5 segundos (opcional)
-            setTimeout(() => {
-                // Aquí puedes redirigir a la página principal o dashboard
-                window.location.href = "/"; // Ajusta la ruta según tu aplicación
-            }, 1500);
+            // Cierra el modal tras 1.5s, sin redirigir a ningún sitio
+            setTimeout(() => onClose?.(), 1500);
 
         } catch (err) {
             setError(err.message);
@@ -84,7 +69,6 @@ function Auth() {
         setError("");
         setSuccess("");
 
-        // Validaciones básicas del lado del cliente
         if (registerForm.password.length < 8) {
             setError("La contraseña debe tener al menos 8 caracteres");
             setLoading(false);
@@ -99,26 +83,11 @@ function Auth() {
             });
 
             const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || "Error al registrarse");
-            }
+            if (!res.ok) throw new Error(data.error || "Error al registrarse");
 
             setSuccess("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
+            setRegisterForm({ nombre: "", email: "", password: "", telefono: "", direccion: "", ciudad: "", cp: "", pais: "" });
 
-            // Limpiar formulario
-            setRegisterForm({
-                nombre: "",
-                email: "",
-                password: "",
-                telefono: "",
-                direccion: "",
-                ciudad: "",
-                cp: "",
-                pais: "",
-            });
-
-            // Cambiar a pestaña de login después de 2 segundos
             setTimeout(() => {
                 setMode("login");
                 setSuccess("");
@@ -137,9 +106,24 @@ function Auth() {
         setSuccess("");
     };
 
+    // Cierra al pulsar overlay, sin propagar el click al sheet
+    const handleOverlayClick = () => onClose?.();
+    const handleSheetClick = (e) => e.stopPropagation();
+
     return (
-        <div className="auth-page">
-            <div className="auth-card">
+        <>
+            <div className="auth-overlay" onClick={handleOverlayClick} />
+
+            <div className="auth-sheet" onClick={handleSheetClick}>
+                <div className="auth-handle" />
+                <button
+                    className="auth-close"
+                    onClick={onClose}
+                    aria-label="Cerrar"
+                >
+                    ✕
+                </button>
+
                 <div className="auth-header">
                     <h1 className="auth-title">
                         {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
@@ -197,11 +181,7 @@ function Auth() {
                                 disabled={loading}
                             />
                         </div>
-                        <button
-                            className="auth-submit"
-                            type="submit"
-                            disabled={loading}
-                        >
+                        <button className="auth-submit" type="submit" disabled={loading}>
                             {loading ? "Entrando..." : "Entrar"}
                         </button>
                     </form>
@@ -247,9 +227,7 @@ function Auth() {
                             />
                         </div>
 
-                        <div className="auth-divider">
-                            <span>Datos opcionales</span>
-                        </div>
+                        <div className="auth-divider"><span>Datos opcionales</span></div>
 
                         <div className="auth-grid">
                             <div className="auth-field">
@@ -318,17 +296,13 @@ function Auth() {
                             </div>
                         </div>
 
-                        <button
-                            className="auth-submit"
-                            type="submit"
-                            disabled={loading}
-                        >
+                        <button className="auth-submit" type="submit" disabled={loading}>
                             {loading ? "Creando cuenta..." : "Crear cuenta"}
                         </button>
                     </form>
                 )}
             </div>
-        </div>
+        </>
     );
 }
 
