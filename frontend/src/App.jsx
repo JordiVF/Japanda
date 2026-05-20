@@ -10,7 +10,8 @@ import Inciensos from "./Components/Pages/Inciensos";
 import { CartProvider } from "./Components/Context/CartContext.jsx";
 import CartDrawer from "./Components/Cart/CartDrawer";
 import Auth from "./Components/Pages/Auth.jsx";
-import Admin from "./Components/Pages/Admin"; // 👈 AÑADIDO
+import Admin from "./Components/Pages/Admin"; 
+import AdminUsuarios from "./Components/Pages/admin/adminUsuarios.jsx"; 
 import { AuthProvider } from "./Components/Additionals/AuthContext";
 
 function App() {
@@ -32,6 +33,8 @@ function App() {
             <Route path="/Auth" element={<Auth />} />
 
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+
           </Routes>
 
         </BrowserRouter>
