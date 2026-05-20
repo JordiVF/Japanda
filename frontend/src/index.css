@@ -164,6 +164,7 @@ body {
     align-items: center;
     margin: 2em;
     display: flex;
+    position: relative;
 }
 
 .navbar-svg-element {

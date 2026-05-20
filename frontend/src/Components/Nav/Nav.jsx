@@ -187,7 +187,7 @@ function Nav() {
                                 {user ? imagenPerfil : svgUsuario}
                             </a>
 
-                            {user && showDropdown && (
+                            {user && (
                                 <div className={`user-dropdown ${showDropdown ? "open" : ""}`}>
                                     <div className="user-dropdown-header">
                                         <span className="user-dropdown-name">{user.nombre}</span>
@@ -196,12 +196,11 @@ function Nav() {
                                     <hr className="user-dropdown-divider" />
                                     <a href="/perfil" className="user-dropdown-item">👤 Mis datos</a>
                                     <a href="/pedidos" className="user-dropdown-item">📦 Mis pedidos</a>
-                                    <a href="/wishlist" className="user-dropdown-item">❤️ Lista de deseos</a>
                                     <a href="/soporte" className="user-dropdown-item">💬 Atención al cliente</a>
                                     <hr className="user-dropdown-divider" />
                                     <button
                                         className="user-dropdown-logout"
-                                        onClick={(e) => { e.preventDefault(); logout(); }}
+                                        onClick={(e) => { e.preventDefault(); logout(); window.location.reload()}}
                                     >
                                         🚪 Cerrar sesión
                                     </button>

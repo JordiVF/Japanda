@@ -1,13 +1,10 @@
-import Nav from "../Nav/Nav";
-import TextToShow from "../Additionals/TextToShow";
+import Shop from "./Shop";
 
 
 function Decoracion() {
-
-    <Nav />
     return (
         <>
-            <TextToShow categoriaId={2} />
+           <Shop categoriaId={2} />
         </>
     );
 }

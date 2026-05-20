@@ -17,7 +17,8 @@ function Shop({ categoriaId }) {
                 if (categoriaId) {
                     url += `?id_categoria=${categoriaId}`;
                 }
-
+                console.log(categoriaId, 'categoriaId')
+                 
                 const response = await fetch(url);
                 const data = await response.json();
 
