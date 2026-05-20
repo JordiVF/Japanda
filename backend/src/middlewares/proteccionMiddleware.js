@@ -28,29 +28,50 @@ const verificarUsuarioPorEmail = async (req, res, next) => {
 
 const verificarPropietario = async (req, res, next) => {
   try {
-    const emailEnviadoEnBody = req.body.email;
-    const emailEnHeader = req.headers['x-user-email'];
-    const emailDelUsuario = emailEnviadoEnBody || emailEnHeader;
-
+    const emailDelUsuario = req.body.email || req.headers['x-user-email'];
     const idDeLaURL = parseInt(req.params.id);
 
-    const { data: usuarioEnBD } = await supabase
+    if (!emailDelUsuario) {
+      return res.status(401).json({ error: 'No autenticado' });
+    }
+
+    const { data: usuarioObjetivo } = await supabase
       .from('usuarios')
       .select('email')
       .eq('id_usuario', idDeLaURL)
       .single();
 
-    if (!usuarioEnBD) {
+    if (!usuarioObjetivo) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    if (usuarioEnBD.email !== emailDelUsuario) {
-      return res.status(403).json({ error: 'No tienes permiso para acceder a estos datos' });
+    const { data: usuarioActual } = await supabase
+      .from('usuarios')
+      .select('email, rol')
+      .eq('email', emailDelUsuario)
+      .single();
+
+    if (!usuarioActual) {
+      return res.status(401).json({ error: 'Usuario no válido' });
     }
 
+    const esAdmin = usuarioActual.rol === 'admin';
+    const esPropietario = usuarioActual.email === usuarioObjetivo.email;
+
+    if (!esAdmin && !esPropietario) {
+      return res.status(403).json({
+        error: 'No tienes permiso para realizar esta acción'
+      });
+    }
+
+    req.user = usuarioActual; // opcional pero recomendado
     next();
+
   } catch (error) {
-    res.status(403).json({ error: 'Error al verificar permisos', details: error.message });
+    res.status(403).json({
+      error: 'Error al verificar permisos',
+      details: error.message
+    });
   }
 };
 
