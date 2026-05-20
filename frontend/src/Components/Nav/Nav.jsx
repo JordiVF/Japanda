@@ -9,16 +9,17 @@ import Auth from "../Pages/Auth";
 
 function Nav() {
     const { setIsCartOpen, totalItems } = useCart();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [currentBanner, setCurrentBanner] = useState(0);
     const [showAuth, setShowAuth] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
     const banners = [banner1, banner2, banner3];
-    const svgUsuario =    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='navbar-svg-element'>
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z" fill="#e34f1d" />
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z" fill="#e34f1d" />
-                                </svg>;
+    const svgUsuario = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='navbar-svg-element'>
+        <path fillRule="evenodd" clipRule="evenodd" d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z" fill="#e34f1d" />
+        <path fillRule="evenodd" clipRule="evenodd" d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z" fill="#e34f1d" />
+    </svg>;
 
-    const imagenPerfil = <img src={`${user.random_image}`} alt="" className='imagenUsuario'/>
+    const imagenPerfil = <img src='https://fastly.picsum.photos/id/922/200/200.jpg?hmac=2ePRMbZ5V-IoV8hGz1XNSAUmQLPTOtYIAxgBHVWD3cU' alt="" className='imagenUsuario' />
 
     const goHome = () => {
         window.location.href = '/';
@@ -61,7 +62,7 @@ function Nav() {
                         placeholder="Buscar producto..."
                     />
                 </div>
-                
+
                 {user?.rol === "admin" && (
                     <a href="/admin" className="navbar-element-admin">
                         <span className="nav-text">Admin Panel</span>
@@ -156,7 +157,13 @@ function Nav() {
                                 className="navbar-element"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    setShowAuth(true);
+
+                                    if (!user) {
+                                        setShowAuth(true);
+                                        return;
+                                    }
+
+                                    setShowDropdown(prev => !prev);
                                 }}
                             >
                                 <span className="nav-text">
@@ -168,13 +175,39 @@ function Nav() {
                                 className="svg-wrapper"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    setShowAuth(true);
+
+                                    if (!user) {
+                                        setShowAuth(true);
+                                        return;
+                                    }
+
+                                    setShowDropdown(prev => !prev);
                                 }}
                             >
                                 {user ? imagenPerfil : svgUsuario}
                             </a>
-                        </div>
 
+                            {user && showDropdown && (
+                                <div className={`user-dropdown ${showDropdown ? "open" : ""}`}>
+                                    <div className="user-dropdown-header">
+                                        <span className="user-dropdown-name">{user.nombre}</span>
+                                        <span className="user-dropdown-email">{user.email}</span>
+                                    </div>
+                                    <hr className="user-dropdown-divider" />
+                                    <a href="/perfil" className="user-dropdown-item">👤 Mis datos</a>
+                                    <a href="/pedidos" className="user-dropdown-item">📦 Mis pedidos</a>
+                                    <a href="/wishlist" className="user-dropdown-item">❤️ Lista de deseos</a>
+                                    <a href="/soporte" className="user-dropdown-item">💬 Atención al cliente</a>
+                                    <hr className="user-dropdown-divider" />
+                                    <button
+                                        className="user-dropdown-logout"
+                                        onClick={(e) => { e.preventDefault(); logout(); }}
+                                    >
+                                        🚪 Cerrar sesión
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </nav>
             </div>

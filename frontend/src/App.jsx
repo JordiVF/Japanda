@@ -10,7 +10,7 @@ import Inciensos from "./Components/Pages/Inciensos";
 import { CartProvider } from "./Components/Context/CartContext.jsx";
 import CartDrawer from "./Components/Cart/CartDrawer";
 import Auth from "./Components/Pages/Auth.jsx";
-import Admin from "./Components/Pages/Admin"; 
+import Admin from "./Components/Pages/Admin"; // 👈 AÑADIDO
 import { AuthProvider } from "./Components/Additionals/AuthContext";
 
 function App() {
@@ -30,6 +30,7 @@ function App() {
             <Route path="/Moda" element={<Moda />} />
             <Route path="/Inciensos" element={<Inciensos />} />
             <Route path="/Auth" element={<Auth />} />
+
             <Route path="/admin" element={<Admin />} />
           </Routes>
 

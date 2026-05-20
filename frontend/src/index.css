@@ -368,3 +368,84 @@ body {
     width: 50px;
     border: 2px solid var(--prim-color);
 }
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: var(--nav);
+    border: 1px solid var(--prim-color);
+    border-radius: 12px;
+    min-width: 220px;
+    padding: 8px 0;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: 0.2s ease;
+    pointer-events: none;
+}
+
+.user-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.user-dropdown-header {
+    padding: 10px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-dropdown-name {
+    font-weight: 700;
+    font-size: 1em;
+    color: var(--sec-color);
+}
+
+.user-dropdown-email {
+    font-size: 0.78em;
+    color: var(--text-color);
+}
+
+.user-dropdown-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 4px 0;
+}
+
+.user-dropdown-item {
+    display: block;
+    padding: 9px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background 0.15s, color 0.15s;
+}
+
+.user-dropdown-item:hover {
+    background: #faf0d9;
+    color: var(--prim-color);
+}
+
+.user-dropdown-logout {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 16px;
+    background: none;
+    border: none;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 0.9em;
+    color: #c0392b;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.user-dropdown-logout:hover {
+    background: #fde8df;
+}
