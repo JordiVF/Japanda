@@ -13,6 +13,9 @@ import Auth from "./Components/Pages/Auth.jsx";
 import Admin from "./Components/Pages/Admin"; 
 import AdminUsuarios from "./Components/Pages/admin/adminUsuarios.jsx"; 
 import { AuthProvider } from "./Components/Additionals/AuthContext";
+import AdminProductos from "./Components/Pages/admin/AdminProductos";
+
+
 
 function App() {
   return (
@@ -34,6 +37,7 @@ function App() {
 
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+            <Route path="/admin/productos" element={<AdminProductos />} />
 
           </Routes>
 

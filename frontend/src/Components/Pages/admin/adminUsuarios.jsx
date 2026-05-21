@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../../Styles/adminVista.css";
 
 function AdminUsuarios() {
+    const navigate = useNavigate();
     const [usuarios, setUsuarios] = useState([]);
     const [busquedaId, setBusquedaId] = useState("");
     const [form, setForm] = useState({
@@ -57,81 +59,75 @@ function AdminUsuarios() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-const handleSubmit = async () => {
-    try {
-        // 🧠 VALIDACIÓN FRONTEND (CREATE)
-        if (!editId) {
-            if (!form.password || form.password.length < 8) {
-                alert("La contraseña debe tener al menos 8 caracteres");
+    const handleSubmit = async () => {
+        try {
+            if (!editId) {
+                if (!form.password || form.password.length < 8) {
+                    alert("La contraseña debe tener al menos 8 caracteres");
+                    return;
+                }
+
+                if (!form.nombre || !form.email) {
+                    alert("Nombre y email son obligatorios");
+                    return;
+                }
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (form.email && !emailRegex.test(form.email)) {
+                alert("Email inválido");
                 return;
             }
 
-            if (!form.nombre || !form.email) {
-                alert("Nombre y email son obligatorios");
-                return;
+            if (!editId) {
+                const res = await axios.post(API, {
+                    nombre: form.nombre,
+                    email: form.email,
+                    password: form.password,
+                    rol: form.rol,
+                    telefono: form.telefono || null,
+                    direccion: form.direccion || null,
+                    ciudad: form.ciudad || null,
+                    cp: form.cp || null,
+                    pais: form.pais || null,
+                    random_image: form.random_image || null,
+                });
+
+                console.log("Usuario creado:", res.data);
             }
-        }
 
-        // 🧠 VALIDACIÓN EMAIL BÁSICA
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (form.email && !emailRegex.test(form.email)) {
-            alert("Email inválido");
-            return;
-        }
+            else {
+                const { password: _password, ...updateData } = form;
 
-        // 🟢 CREATE USER
-        if (!editId) {
-            const res = await axios.post(API, {
-                nombre: form.nombre,
-                email: form.email,
-                password: form.password,
-                rol: form.rol,
-                telefono: form.telefono || null,
-                direccion: form.direccion || null,
-                ciudad: form.ciudad || null,
-                cp: form.cp || null,
-                pais: form.pais || null,
-                random_image: form.random_image || null,
+                const res = await axios.put(`${API}/${editId}`, {
+                    ...updateData,
+                });
+
+                console.log("Usuario actualizado:", res.data);
+            }
+
+            setForm({
+                nombre: "",
+                email: "",
+                password: "",
+                rol: "cliente",
+                telefono: "",
+                direccion: "",
+                ciudad: "",
+                cp: "",
+                pais: "",
+                random_image: "",
             });
 
-            console.log("Usuario creado:", res.data);
+            setEditId(null);
+
+            fetchUsuarios();
+
+        } catch (err) {
+            console.error("ERROR COMPLETO:", err.response?.data || err.message);
+            alert(err.response?.data?.error || "Error en la operación");
         }
-
-        // 🟡 UPDATE USER
-        else {
-           const { password: _password, ...updateData } = form;
-
-            const res = await axios.put(`${API}/${editId}`, {
-                ...updateData,
-            });
-
-            console.log("Usuario actualizado:", res.data);
-        }
-
-        // 🔄 RESET FORM
-        setForm({
-            nombre: "",
-            email: "",
-            password: "",
-            rol: "cliente",
-            telefono: "",
-            direccion: "",
-            ciudad: "",
-            cp: "",
-            pais: "",
-            random_image: "",
-        });
-
-        setEditId(null);
-
-        // 🔄 REFRESH LISTA
-        fetchUsuarios();
-
-    } catch (err) {
-        console.error("ERROR COMPLETO:", err.response?.data || err.message);
-        alert(err.response?.data?.error || "Error en la operación");
-    }
-};
+    };
     const handleEdit = (usuario) => {
         setEditId(usuario.id_usuario);
         setForm({
@@ -151,9 +147,19 @@ const handleSubmit = async () => {
     return (
         <div className="admin-vista">
             <div className="admin-vista-wrapper">
-                <h1>Usuarios</h1>
+                <div className="admin-header">
+                    <button
+                        className="back-btn"
+                        onClick={() => navigate(-1)}
+                    >
+                        ← Volver
+                    </button>
 
-                {/* BUSCADOR */}
+                    <h1 style={{margin:'20px 0'}}>Usuarios</h1>
+                </div>
+
+
+
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
@@ -169,7 +175,6 @@ const handleSubmit = async () => {
                     </button>
                 </div>
 
-                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
@@ -212,7 +217,6 @@ const handleSubmit = async () => {
                     </table>
                 </div>
 
-                {/* FORMULARIO CREAR / EDITAR */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }}>
                     <div className="admin-form">
                         <h3>{editId ? "Editar usuario" : "Crear usuario"}</h3>

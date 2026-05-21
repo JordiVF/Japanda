@@ -69,6 +69,17 @@
     transition: border-color 0.2s, box-shadow 0.2s;
     min-width: 180px;
 }
+.admin-input-cat{
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    font-family: var(--admin-font);
+    font-size: 0.9rem;
+    color: var(--admin-text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
 
 .admin-input:focus,
 .admin-select:focus {
@@ -235,4 +246,7 @@
     display: flex;
     gap: 0.6rem;
     padding-top: 0.25rem;
+}
+.admin-table tbody tr.editing-row:hover {
+    background-color: #cfe3f5;
 }
