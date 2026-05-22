@@ -2,28 +2,24 @@ const supabase = require('../config/supabaseClient');
 
 const getProductos = async (req, res) => {
   try {
+    const { id_categoria, nombre } = req.query;
 
-    const { id_categoria } = req.query;
-
-    let query = supabase
-      .from('productos')
-      .select('*');
+    let query = supabase.from('productos').select('*');
 
     if (id_categoria) {
       query = query.eq('id_categoria', id_categoria);
     }
 
-    const { data, error } = await query;
+    if (nombre) {
+      query = query.ilike('nombre', `%${nombre}%`);
+    }
 
+    const { data, error } = await query;
     if (error) throw error;
 
     res.status(200).json(data);
-
   } catch (error) {
-    res.status(500).json({
-      error: 'Error al obtener productos',
-      details: error.message
-    });
+    res.status(500).json({ error: 'Error al obtener productos', details: error.message });
   }
 };
 
