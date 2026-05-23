@@ -1,18 +1,45 @@
 import { useState } from "react";
 import { useCart } from "../Context/useCart";
+import { useAuth } from "../Additionals/AuthContext";
+import Checkout from "../Pages/Checkout";
 import "../../Styles/CartDrawer.css";
 
 function CartDrawer() {
     const { cartItems, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, clearCart, totalPrice, totalItems } = useCart();
+    const { user } = useAuth();
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showCheckout, setShowCheckout] = useState(false);
 
     const handleClearCart = () => {
         clearCart();
         setShowConfirm(false);
     };
 
+    const handleFinalizarCompra = () => {
+        if (!user) {
+            alert("Debes iniciar sesión para finalizar la compra.");
+            return;
+        }
+        if (cartItems.length === 0) {
+            alert("Tu carrito está vacío.");
+            return;
+        }
+        setIsCartOpen(false);
+        setShowCheckout(true);
+    };
+
     return (
         <>
+            {showCheckout && (
+                <Checkout
+                    onClose={() => setShowCheckout(false)}
+                    onSuccess={() => {
+                        clearCart();
+                        setShowCheckout(false);
+                    }}
+                />
+            )}
+
             <div
                 className={`cart-overlay ${isCartOpen ? "cart-overlay--visible" : ""}`}
                 onClick={() => { setIsCartOpen(false); setShowConfirm(false); }}
@@ -79,7 +106,7 @@ function CartDrawer() {
                             <span>Total</span>
                             <strong>{totalPrice.toFixed(2)} €</strong>
                         </div>
-                        <button className="cart-checkout-btn">
+                        <button className="cart-checkout-btn" onClick={handleFinalizarCompra}>
                             Finalizar compra →
                         </button>
 
