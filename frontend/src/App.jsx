@@ -16,6 +16,8 @@ import { AuthProvider } from "./Components/Additionals/AuthContext";
 import AdminProductos from "./Components/Pages/admin/AdminProductos";
 import AdminCategorias from "./Components/Pages/admin/AdminCategorias";
 import AdminSubcategorias from "./Components/Pages/admin/AdminSubcategorias";
+import AdminPedidos from "./Components/Pages/admin/adminPedidos.jsx";
+import AdminDetallesPedidos from "./Components/Pages/admin/adminDetallePedidos.jsx";
 
 
 import { useState } from "react";
@@ -43,8 +45,10 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/usuarios" element={<AdminUsuarios />} />
             <Route path="/admin/productos" element={<AdminProductos />} />
-            <Route path="/admin/categorias" element={<AdminCategorias />} />ç
+            <Route path="/admin/categorias" element={<AdminCategorias />} />
             <Route path="/admin/subcategorias" element={<AdminSubcategorias />} />
+            <Route path="/admin/pedidos" element={<AdminPedidos />} />
+            <Route path="/admin/detalle-pedidos" element={<AdminDetallesPedidos />} />
 
 
           </Routes>

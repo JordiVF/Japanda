@@ -10,6 +10,7 @@ function Admin() {
         { name: "Categorías", path: "/admin/categorias" },
         { name: "Subcategorías", path: "/admin/subcategorias" },
         { name: "Usuarios", path: "/admin/usuarios" },
+        { name: "Pedidos", path: "/admin/pedidos" },
         { name: "Detalle de pedidos", path: "/admin/detalle-pedidos" },
         { name: "Pagos", path: "/admin/pagos" },
         { name: "Envíos", path: "/admin/envios" },
