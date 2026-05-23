@@ -7,11 +7,12 @@ import { useCart } from "../Context/useCart";
 import { useAuth } from "../Additionals/AuthContext";
 import Auth from "../Pages/Auth";
 
-function Nav() {
+function Nav({ onSearch }) {
     const { setIsCartOpen, totalItems } = useCart();
     const { user, logout } = useAuth();
     const [currentBanner, setCurrentBanner] = useState(0);
     const [showAuth, setShowAuth] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const banners = [banner1, banner2, banner3];
     const svgUsuario = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='navbar-svg-element'>
@@ -21,8 +22,15 @@ function Nav() {
 
     const imagenPerfil = <img src='https://fastly.picsum.photos/id/922/200/200.jpg?hmac=2ePRMbZ5V-IoV8hGz1XNSAUmQLPTOtYIAxgBHVWD3cU' alt="" className='imagenUsuario' />
 
+
+
     const goHome = () => {
         window.location.href = '/';
+    };
+    const handleSearch = (e) => {
+        if (e.key === 'Enter') {
+            onSearch(searchQuery.trim());
+        }
     };
 
     useEffect(() => {
@@ -60,6 +68,11 @@ function Nav() {
                         type="text"
                         className="input-buscador"
                         placeholder="Buscar producto..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            onSearch(e.target.value.trim());
+                        }}
                     />
                 </div>
 
@@ -200,7 +213,7 @@ function Nav() {
                                     <hr className="user-dropdown-divider" />
                                     <button
                                         className="user-dropdown-logout"
-                                        onClick={(e) => { e.preventDefault(); logout(); window.location.reload()}}
+                                        onClick={(e) => { e.preventDefault(); logout(); window.location.reload() }}
                                     >
                                         🚪 Cerrar sesión
                                     </button>

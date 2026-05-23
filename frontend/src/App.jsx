@@ -14,20 +14,21 @@ import Admin from "./Components/Pages/Admin";
 import AdminUsuarios from "./Components/Pages/admin/adminUsuarios.jsx"; 
 import { AuthProvider } from "./Components/Additionals/AuthContext";
 import AdminProductos from "./Components/Pages/admin/AdminProductos";
-
+import { useState } from "react";
 
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState('');
   return (
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
 
-          <Nav />
+          <Nav onSearch={setSearchQuery} />
           <CartDrawer />
 
           <Routes>
-            <Route path="/" element={<Shop />} />
+            <Route path="/" element={<Shop searchQuery={searchQuery} />} />
             <Route path="/Alimentacion" element={<Alimentacion />} />
             <Route path="/Decoracion" element={<Decoracion />} />
             <Route path="/Merchandising" element={<Merchandising />} />
