@@ -15,36 +15,46 @@ const SECCIONES_MAP = {
 
 function Alimentacion() {
     const [searchParams] = useSearchParams();
-    const [subcategoriaIds, setSubcategoriaIds]   = useState(null);
-    const [seccionActiva,   setSeccionActiva]      = useState(null);
+    const [subcategoriaIds, setSubcategoriaIds] = useState(null);
+    const [seccionActiva, setSeccionActiva] = useState(null);
 
     useEffect(() => {
         const seccion = searchParams.get("seccion");
+
         if (seccion && SECCIONES_MAP[seccion]) {
             setSeccionActiva(seccion);
             setSubcategoriaIds(SECCIONES_MAP[seccion]);
+        } else {
+            setSeccionActiva(null);
+            setSubcategoriaIds(null);
         }
     }, [searchParams]);
 
     const handleSeccion = (seccion) => {
-        if (!seccion) {
+        if (!seccion || !SECCIONES_MAP[seccion]) {
             setSeccionActiva(null);
             setSubcategoriaIds(null);
             return;
         }
+
         setSeccionActiva(seccion);
-        setSubcategoriaIds(SECCIONES_MAP[seccion] || null);
+        setSubcategoriaIds([...SECCIONES_MAP[seccion]]); 
     };
 
     return (
         <>
             <TextToShow categoriaId={1} />
+
             <Secciones
                 secciones={Object.keys(SECCIONES_MAP)}
                 activeSeccion={seccionActiva}
                 onSelect={handleSeccion}
             />
-            <Shop categoriaId={1} subcategoriaIds={subcategoriaIds} />
+
+            <Shop
+                categoriaId={1}
+                subcategoriaIds={subcategoriaIds}
+            />
         </>
     );
 }

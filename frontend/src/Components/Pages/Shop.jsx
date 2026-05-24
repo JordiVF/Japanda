@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../Pages/ProductCard";
-import TextToShow from "../Additionals/TextToShow";
 
-function Shop({ categoriaId }) {
+function Shop({ categoriaId, subcategoriaIds }) {
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,15 +20,28 @@ function Shop({ categoriaId }) {
 
                 const params = new URLSearchParams();
 
-                if (categoriaId) params.append("id_categoria", categoriaId);
-                if (searchQuery) params.append("nombre", searchQuery);
+                if (categoriaId) {
+                    params.append("id_categoria", categoriaId);
+                }
 
-                const url = `http://localhost:3000/api/productos${params.toString() ? "?" + params.toString() : ""}`;
+                if (searchQuery) {
+                    params.append("nombre", searchQuery);
+                }
+
+                if (subcategoriaIds?.length) {
+                    params.append(
+                        "subcategoriaIds",
+                        subcategoriaIds.join(",")
+                    );
+                }
+
+                const url = `http://localhost:3000/api/productos?${params.toString()}`;
+                console.log("URL:", url);
 
                 const res = await fetch(url);
                 const data = await res.json();
 
-                if (!res.ok) throw new Error(data?.error);
+                if (!res.ok) throw new Error(data?.error || "Error");
 
                 setProducts(data);
 
@@ -42,7 +54,7 @@ function Shop({ categoriaId }) {
 
         fetchProducts();
 
-    }, [categoriaId, searchQuery]);
+    }, [categoriaId, searchQuery, subcategoriaIds]);
 
     return (
         <section className="shop">

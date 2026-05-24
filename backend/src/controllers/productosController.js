@@ -2,7 +2,7 @@ const supabase = require('../config/supabaseClient');
 
 const getProductos = async (req, res) => {
   try {
-    const { id_categoria, nombre, id_subcategoria } = req.query;
+    const { id_categoria, nombre, subcategoriaIds } = req.query;
  
     let query = supabase.from('productos').select('*');
  
@@ -14,10 +14,8 @@ const getProductos = async (req, res) => {
       query = query.ilike('nombre', `%${nombre}%`);
     }
  
-    if (id_subcategoria) {
-      const ids = Array.isArray(id_subcategoria)
-        ? id_subcategoria.map(Number)
-        : [Number(id_subcategoria)];
+    if (subcategoriaIds) {
+      const ids = subcategoriaIds.split(',').map(Number);
       query = query.in('id_subcategoria', ids);
     }
  
