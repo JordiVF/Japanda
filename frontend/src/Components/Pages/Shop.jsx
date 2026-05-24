@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import '../../Styles/shop.css';
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../Pages/ProductCard";
 import TextToShow from "../Additionals/TextToShow";
 
-function Shop({ categoriaId, searchQuery }) {
+function Shop({ categoriaId }) {
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const [searchParams] = useSearchParams();
+    const searchQuery = searchParams.get("search") || "";
 
     useEffect(() => {
 
@@ -17,23 +20,21 @@ function Shop({ categoriaId, searchQuery }) {
                 setError(null);
 
                 const params = new URLSearchParams();
-                if (categoriaId) params.append('id_categoria', categoriaId);
-                if (searchQuery) params.append('nombre', searchQuery);
 
-                const url = `http://localhost:3000/api/productos${params.toString() ? '?' + params.toString() : ''}`;
+                if (categoriaId) params.append("id_categoria", categoriaId);
+                if (searchQuery) params.append("nombre", searchQuery);
 
-                const response = await fetch(url);
-                const data = await response.json();
+                const url = `http://localhost:3000/api/productos${params.toString() ? "?" + params.toString() : ""}`;
 
-                if (!response.ok) {
-                    throw new Error(data?.error || "Error cargando productos");
-                }
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data?.error);
 
                 setProducts(data);
 
-            } catch (error) {
-                console.error("Error fetching products:", error);
-                setError("No se pudieron cargar los productos.");
+            } catch (err) {
+                setError("Error cargando productos");
             } finally {
                 setLoading(false);
             }
@@ -46,32 +47,22 @@ function Shop({ categoriaId, searchQuery }) {
     return (
         <section className="shop">
 
-            {!searchQuery && categoriaId !== 1 && <TextToShow categoriaId={categoriaId} />}
-
             {searchQuery && (
-                <p className="search-results-label">
-                    Resultados para: <strong>"{searchQuery}"</strong>
-                </p>
+                <p>Resultados para: <b>{searchQuery}</b></p>
             )}
 
-            {loading && <p className="shop-status">Cargando productos...</p>}
-
-            {!loading && error && <p className="shop-status shop-error">{error}</p>}
+            {loading && <p>Cargando...</p>}
+            {error && <p>{error}</p>}
 
             {!loading && !error && products.length === 0 && (
-                <p className="shop-status">No se encontraron productos.</p>
+                <p>No hay productos</p>
             )}
 
-            {!loading && !error && products.length > 0 && (
-                <div className="product-grid">
-                    {products.map(producto => (
-                        <ProductCard
-                            key={producto.id_producto}
-                            product={producto}
-                        />
-                    ))}
-                </div>
-            )}
+            <div className="product-grid">
+                {products.map(p => (
+                    <ProductCard key={p.id_producto} product={p} />
+                ))}
+            </div>
 
         </section>
     );

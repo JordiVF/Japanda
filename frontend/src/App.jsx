@@ -24,123 +24,42 @@ import AdminEnvios from "./Components/Pages/admin/AdminEnvios";
 import Perfil from "./Components/Pages/Perfil.jsx";
 import Contacto from "./Components/Pages/AtencionCliente";
 import MisPedidos from "./Components/Pages/MisPedidos.jsx";
-
 import AdminRoute from "./Components/Guards/AdminRoute";
 
-import { useState } from "react";
-
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
-
   return (
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
 
-          <Nav onSearch={setSearchQuery} />
+          <Nav />
+
           <CartDrawer />
 
           <Routes>
 
-            <Route path="/" element={<Shop searchQuery={searchQuery} />} />
-            <Route path="/Alimentacion" element={<Alimentacion searchQuery={searchQuery} />} />
-            <Route path="/Decoracion" element={<Decoracion searchQuery={searchQuery} />} />
-            <Route path="/Merchandising" element={<Merchandising searchQuery={searchQuery} />} />
-            <Route path="/Moda" element={<Moda searchQuery={searchQuery} />} />
-            <Route path="/Inciensos" element={<Inciensos searchQuery={searchQuery} />} />
+            <Route path="/" element={<Shop />} />
+            <Route path="/Alimentacion" element={<Alimentacion />} />
+            <Route path="/Decoracion" element={<Decoracion />} />
+            <Route path="/Merchandising" element={<Merchandising />} />
+            <Route path="/Moda" element={<Moda />} />
+            <Route path="/Inciensos" element={<Inciensos />} />
+
             <Route path="/Auth" element={<Auth />} />
             <Route path="/Perfil" element={<Perfil />} />
             <Route path="/Soporte" element={<Contacto />} />
             <Route path="/pedidos" element={<MisPedidos />} />
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <Admin />
-                </AdminRoute>
-              }
-            />
 
-            <Route
-              path="/admin/usuarios"
-              element={
-                <AdminRoute>
-                  <AdminUsuarios />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/productos"
-              element={
-                <AdminRoute>
-                  <AdminProductos />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/categorias"
-              element={
-                <AdminRoute>
-                  <AdminCategorias />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/subcategorias"
-              element={
-                <AdminRoute>
-                  <AdminSubcategorias />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/pedidos"
-              element={
-                <AdminRoute>
-                  <AdminPedidos />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/detalle-pedidos"
-              element={
-                <AdminRoute>
-                  <AdminDetallesPedidos />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/carrito"
-              element={
-                <AdminRoute>
-                  <AdminCarrito />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/detalle-carritos"
-              element={
-                <AdminRoute>
-                  <AdminDetalleCarritos />
-                </AdminRoute>
-              }
-            />
-
-            <Route
-              path="/admin/envios"
-              element={
-                <AdminRoute>
-                  <AdminEnvios />
-                </AdminRoute>
-              }
-            />
+            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/admin/usuarios" element={<AdminRoute><AdminUsuarios /></AdminRoute>} />
+            <Route path="/admin/productos" element={<AdminRoute><AdminProductos /></AdminRoute>} />
+            <Route path="/admin/categorias" element={<AdminRoute><AdminCategorias /></AdminRoute>} />
+            <Route path="/admin/subcategorias" element={<AdminRoute><AdminSubcategorias /></AdminRoute>} />
+            <Route path="/admin/pedidos" element={<AdminRoute><AdminPedidos /></AdminRoute>} />
+            <Route path="/admin/detalle-pedidos" element={<AdminRoute><AdminDetallesPedidos /></AdminRoute>} />
+            <Route path="/admin/carrito" element={<AdminRoute><AdminCarrito /></AdminRoute>} />
+            <Route path="/admin/detalle-carritos" element={<AdminRoute><AdminDetalleCarritos /></AdminRoute>} />
+            <Route path="/admin/envios" element={<AdminRoute><AdminEnvios /></AdminRoute>} />
 
           </Routes>
 
