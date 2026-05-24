@@ -194,11 +194,56 @@ const deletePedido = async (req, res) => {
   }
 };
 
+const getPedidoConDetalles = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: pedido, error: errorPedido } = await supabase
+      .from('pedidos')
+      .select('id_pedido, id_usuario, fecha, estado, total')
+      .eq('id_pedido', id)
+      .single();
+
+    if (errorPedido || !pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    const { data: detalles, error: errorDetalles } = await supabase
+      .from('detalles_pedido')
+      .select(`
+        id_detalle,
+        cantidad,
+        precio_unitario,
+        productos (
+          id_producto,
+          nombre,
+          imagen_url,
+          precio
+        )
+      `)
+      .eq('id_pedido', id);
+
+    if (errorDetalles) throw errorDetalles;
+
+    res.status(200).json({
+      ...pedido,
+      productos: detalles
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Error al obtener pedido con detalles',
+      details: error.message
+    });
+  }
+};
+
 module.exports = {
   getPedidos,
   getPedidoById,
   getPedidosByUsuario,
   createPedido,
   updatePedido,
-  deletePedido
+  deletePedido,
+  getPedidoConDetalles
 };
