@@ -6,7 +6,7 @@ router.get('/', carritoController.getTodosLosCarritos);
 router.get('/usuario/:id_usuario', carritoController.getCarritoUsuario);
 router.get('/:id', carritoController.getCarritoById);
 router.post('/', carritoController.createCarrito);
-router.put('/:id_usuario/:id', carritoController.updateCarrito);
-router.delete('/:id_usuario/:id', carritoController.deleteCarrito);
+router.put('/:id', carritoController.updateCarrito);
+router.delete('/:id', carritoController.deleteCarrito);
 
 module.exports = router;
