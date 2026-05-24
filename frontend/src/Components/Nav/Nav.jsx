@@ -292,6 +292,15 @@ function Nav({}) {
                             </div>
                         ))}
                     </div>
+                    <div className="carousel-controls">
+                        {banners.map((_, index) => (
+                            <button
+                                key={index}
+                                className={`carousel-dot ${currentBanner === index ? "active" : ""}`}
+                                onClick={() => setCurrentBanner(index)}
+                            />
+                        ))}
+                    </div>
                 </div>
             )}
         </>
