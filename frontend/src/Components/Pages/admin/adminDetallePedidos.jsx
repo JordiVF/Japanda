@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "../../../Styles/adminVista.css";
 
 function AdminDetallesPedidos() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [detalles, setDetalles] = useState([]);
     const [busquedaId, setBusquedaId] = useState("");
     const [editId, setEditId] = useState(null);
@@ -36,8 +37,16 @@ function AdminDetallesPedidos() {
     };
 
     useEffect(() => {
+    const pedidoParam = searchParams.get("pedido");
+    if (pedidoParam) {
+        setBusquedaId(pedidoParam);
+        axios.get(`${API_DETALLES}/pedido/${pedidoParam}`)
+            .then(res => setDetalles(Array.isArray(res.data) ? res.data : [res.data]))
+            .catch(err => console.error(err));
+    } else {
         fetchData();
-    }, []);
+    }
+}, []);
 
     const handleDelete = async (id_detalle) => {
         const confirmado = window.confirm(
@@ -54,16 +63,15 @@ function AdminDetallesPedidos() {
         }
     };
 
-    const handleSearch = async () => {
-        if (!busquedaId) return fetchData();
-        try {
-            const res = await axios.get(`${API_DETALLES}/${busquedaId}`);
-            setDetalles([res.data]);
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
+const handleSearch = async () => {
+    if (!busquedaId) return fetchData();
+    try {
+        const res = await axios.get(`${API_DETALLES}/pedido/${busquedaId}`);
+        setDetalles(Array.isArray(res.data) ? res.data : [res.data]);
+    } catch (err) {
+        console.error(err);
+    }
+};
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -130,7 +138,7 @@ function AdminDetallesPedidos() {
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
-                        placeholder="Buscar por ID detalle"
+                        placeholder="Buscar por ID pedido"
                         value={busquedaId}
                         onChange={(e) => setBusquedaId(e.target.value)}
                     />

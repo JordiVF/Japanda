@@ -26,7 +26,7 @@ function AdminPedidos() {
     };
 
     useEffect(() => {
-        fetchPedidos(); 
+        fetchPedidos();
     }, []);
 
     const handleDelete = async (id) => {
@@ -51,7 +51,7 @@ function AdminPedidos() {
             const res = await axios.get(`${API}/${busquedaId}`);
             setPedidos([res.data]);
         } catch (err) {
-             alert(err.response?.data?.error || "Pedido no encontrado");
+            alert(err.response?.data?.error || "Pedido no encontrado");
         }
     };
 
@@ -95,12 +95,12 @@ function AdminPedidos() {
 
     const estadoColor = (estado) => {
         switch (estado) {
-            case "pendiente":   return { background: "#fff3cd", color: "#856404" };
-            case "procesando":  return { background: "#cfe2ff", color: "#084298" };
-            case "enviado":     return { background: "#d1ecf1", color: "#0c5460" };
-            case "entregado":   return { background: "#d4edda", color: "#155724" };
-            case "cancelado":   return { background: "#f8d7da", color: "#721c24" };
-            default:            return {};
+            case "pendiente": return { background: "#fff3cd", color: "#856404" };
+            case "procesando": return { background: "#cfe2ff", color: "#084298" };
+            case "enviado": return { background: "#d1ecf1", color: "#0c5460" };
+            case "entregado": return { background: "#d4edda", color: "#155724" };
+            case "cancelado": return { background: "#f8d7da", color: "#721c24" };
+            default: return {};
         }
     };
 
@@ -189,7 +189,7 @@ function AdminPedidos() {
                                             </button>
                                             <button
                                                 className="admin-btn admin-btn-secondary"
-                                                onClick={() => navigate(`/admin/pedidos/${p.id_pedido}/detalles`)}
+                                                onClick={() => navigate(`/admin/detalle-pedidos?pedido=${p.id_pedido}`)}
                                             >
                                                 Detalles
                                             </button>
