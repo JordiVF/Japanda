@@ -191,6 +191,7 @@
     vertical-align: middle;
 }
 
+
 .admin-table tbody tr:last-child td {
     border-bottom: none;
 }
@@ -249,4 +250,12 @@
 }
 .admin-table tbody tr.editing-row:hover {
     background-color: #cfe3f5;
+}
+
+.admin-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.admin-table tbody tr:nth-child(even) {
+    background-color: #faf4eb;
 }

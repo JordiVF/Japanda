@@ -35,7 +35,8 @@ export function CartProvider({ children }) {
             id_producto: item.id_producto,
             nombre: item.nombre,
             precio: item.precio_unitario,
-            quantity: item.cantidad
+            quantity: item.cantidad,
+            imagen_url: item.imagen_url
         }));
     };
 
@@ -123,6 +124,9 @@ export function CartProvider({ children }) {
     const updateQuantity = async (id_producto, delta) => {
         const u = getUser();
 
+        const item = cartItems.find(i => i.id_producto === id_producto);
+        const newQuantity = item ? item.quantity + delta : 0;
+
         setCartItems(prev =>
             prev
                 .map(i =>
@@ -135,6 +139,8 @@ export function CartProvider({ children }) {
 
         if (!u?.id_usuario) return;
 
+        if (newQuantity <= 0) return;
+
         const carritoRes = await axios.get(
             `http://localhost:3000/api/carrito/usuario/${u.id_usuario}`
         );
@@ -143,7 +149,7 @@ export function CartProvider({ children }) {
         if (!carrito?.id_carrito) return;
 
         await axios.put(`${API}/${carrito.id_carrito}/${id_producto}`, {
-            cantidad: delta
+            cantidad: newQuantity  
         });
     };
 

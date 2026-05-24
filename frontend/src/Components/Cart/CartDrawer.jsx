@@ -62,7 +62,7 @@ function CartDrawer() {
             />
 
             <aside className={`cart-drawer ${isCartOpen ? "cart-drawer--open" : ""}`}>
-                
+
                 <div className="cart-header">
                     <div className="cart-header__title">
                         <span className="cart-header__icon">🛒</span>
@@ -168,13 +168,8 @@ function CartDrawer() {
                                 <p>¿Vaciar carrito?</p>
 
                                 <div className="cart-confirm__btns">
-                                    <button onClick={handleClearCart}>
-                                        Sí
-                                    </button>
-
-                                    <button onClick={() => setShowConfirm(false)}>
-                                        No
-                                    </button>
+                                    <button className="cart-confirm__yes" onClick={handleClearCart}>Sí</button>
+                                    <button className="cart-confirm__no" onClick={() => setShowConfirm(false)}>No</button>
                                 </div>
                             </div>
                         ) : (

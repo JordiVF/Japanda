@@ -4,66 +4,67 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../../Styles/adminVista.css";
 
-const API_DETALLES = "http://localhost:3000/api/detalle_carrito";
+const API_DETALLES = "http://localhost:3000/api/carrito-detalle";
 const API_PRODUCTOS = "http://localhost:3000/api/productos";
+const API_CARRITOS  = "http://localhost:3000/api/carrito";
 
 function AdminDetalleCarritos() {
-    const navigate = useNavigate();
-    const formRef = useRef(null);
+    const navigate  = useNavigate();
+    const formRef   = useRef(null);
 
-    const [detalles, setDetalles] = useState([]);
-    const [productos, setProductos] = useState([]);
-
-    const [busquedaId, setBusquedaId] = useState("");
-    const [editId, setEditId] = useState(null);
-
-    const [form, setForm] = useState({
-        id_carrito: "",
-        id_producto: "",
-        cantidad: 1,
-        precio_unitario: "",
-    });
-
-    const fetchDetalles = async () => {
-        try {
-            const res = await axios.get(API_DETALLES);
-            setDetalles(res.data);
-        } catch (err) {
-            console.error(err);
+    const estadoColor = (estado) => {
+        switch (estado) {
+            case "activo":     return { background: "#d4edda", color: "#155724" };
+            case "inactivo":   return { background: "#f8d7da", color: "#721c24" };
+            case "abandonado": return { background: "#fff3cd", color: "#856404" };
+            case "convertido": return { background: "#cfe2ff", color: "#084298" };
+            default:           return { background: "#fff",   color: "#333" };
         }
     };
 
+    const [detalles,  setDetalles]  = useState([]);
+    const [productos, setProductos] = useState([]);
+    const [carritos,  setCarritos]  = useState([]);
+
+    const [busquedaId, setBusquedaId] = useState("");
+    const [editId,     setEditId]     = useState(null);
+
+    const [form, setForm] = useState({
+        id_carrito:      "",
+        id_producto:     "",
+        cantidad:        1,
+        precio_unitario: "",
+    });
+
+    const fetchDetalles  = async () => {
+        try { const res = await axios.get(API_DETALLES);  setDetalles(res.data);  } catch (err) { console.error(err); }
+    };
     const fetchProductos = async () => {
-        try {
-            const res = await axios.get(API_PRODUCTOS);
-            setProductos(res.data);
-        } catch (err) {
-            console.error(err);
-        }
+        try { const res = await axios.get(API_PRODUCTOS); setProductos(res.data); } catch (err) { console.error(err); }
+    };
+    const fetchCarritos  = async () => {
+        try { const res = await axios.get(API_CARRITOS);  setCarritos(res.data);  } catch (err) { console.error(err); }
     };
 
     useEffect(() => {
         fetchDetalles();
         fetchProductos();
+        fetchCarritos();
     }, []);
 
-    const handleSearch = async () => {
-        if (!busquedaId) return fetchDetalles();
-
-        try {
-            const res = await axios.get(`${API_DETALLES}?id_carrito=${busquedaId}`);
-            setDetalles(res.data);
-        } catch (err) {
-            alert(err.response?.data?.error || "No encontrado");
-        }
+    const handleSearch = () => {
+        if (!busquedaId.trim()) { fetchDetalles(); return; }
+        setDetalles(prev => prev.filter(d => String(d.id_carrito) === busquedaId.trim()));
     };
 
     const handleDelete = async (id_carrito, id_producto) => {
-        const confirmado = window.confirm("¿Eliminar producto del carrito?");
-        if (!confirmado) return;
-
+        if (!window.confirm("¿Eliminar producto del carrito?")) return;
         try {
             await axios.delete(`${API_DETALLES}/${id_carrito}/${id_producto}`);
+            if (editId === `${id_carrito}-${id_producto}`) {
+                setEditId(null);
+                setForm({ id_carrito: "", id_producto: "", cantidad: 1, precio_unitario: "" });
+            }
             fetchDetalles();
         } catch (err) {
             alert(err.response?.data?.error || "Error al eliminar");
@@ -71,7 +72,33 @@ function AdminDetalleCarritos() {
     };
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === "id_producto") {
+            const producto = productos.find(p => String(p.id_producto) === String(value));
+            setForm(prev => ({
+                ...prev,
+                id_producto:     value,
+                precio_unitario: producto ? producto.precio : "",
+            }));
+            return;
+        }
+
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleEdit = (d) => {
+        setEditId(`${d.id_carrito}-${d.id_producto}`);
+        setForm({
+            id_carrito:      d.id_carrito,
+            id_producto:     d.id_producto,
+            cantidad:        d.cantidad,
+            precio_unitario: d.precio_unitario,
+        });
+        setTimeout(() =>
+            formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+            50
+        );
     };
 
     const handleSubmit = async () => {
@@ -85,46 +112,25 @@ function AdminDetalleCarritos() {
                 await axios.put(
                     `${API_DETALLES}/${form.id_carrito}/${form.id_producto}`,
                     {
-                        cantidad: form.cantidad,
-                        precio_unitario: form.precio_unitario,
+                        cantidad:        Number(form.cantidad),
+                        precio_unitario: Number(form.precio_unitario),
                     }
                 );
             } else {
                 await axios.post(API_DETALLES, {
-                    id_carrito: Number(form.id_carrito),
-                    id_producto: Number(form.id_producto),
-                    cantidad: Number(form.cantidad),
-                    precio_unitario: form.precio_unitario,
+                    id_carrito:      Number(form.id_carrito),
+                    id_producto:     Number(form.id_producto),
+                    cantidad:        Number(form.cantidad),
+                    precio_unitario: Number(form.precio_unitario),
                 });
             }
 
-            setForm({
-                id_carrito: "",
-                id_producto: "",
-                cantidad: 1,
-                precio_unitario: "",
-            });
-
+            setForm({ id_carrito: "", id_producto: "", cantidad: 1, precio_unitario: "" });
             setEditId(null);
             fetchDetalles();
         } catch (err) {
             alert(err.response?.data?.error || "Error en operación");
         }
-    };
-
-    const handleEdit = (d) => {
-        setEditId(`${d.id_carrito}-${d.id_producto}`);
-
-        setForm({
-            id_carrito: d.id_carrito,
-            id_producto: d.id_producto,
-            cantidad: d.cantidad,
-            precio_unitario: d.precio_unitario,
-        });
-
-        setTimeout(() => {
-            formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 50);
     };
 
     return (
@@ -139,29 +145,37 @@ function AdminDetalleCarritos() {
 
                 <h1 style={{ margin: "20px 0" }}>Detalle Carritos</h1>
 
+                {/* BUSCADOR */}
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
                         placeholder="Buscar por ID carrito"
                         value={busquedaId}
                         onChange={(e) => setBusquedaId(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     />
                     <button className="admin-btn admin-btn-primary" onClick={handleSearch}>
                         Buscar
                     </button>
-                    <button className="admin-btn admin-btn-secondary" onClick={fetchDetalles}>
+                    <button
+                        className="admin-btn admin-btn-secondary"
+                        onClick={() => { setBusquedaId(""); fetchDetalles(); }}
+                    >
                         Reset
                     </button>
                 </div>
 
+                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
                             <tr>
-                                <th>Carrito</th>
+                                <th>ID Carrito</th>
+                                <th>Usuario</th>
                                 <th>Producto</th>
                                 <th>Cantidad</th>
                                 <th>Precio unitario</th>
+                                <th>Fecha agregado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -169,40 +183,57 @@ function AdminDetalleCarritos() {
                         <tbody>
                             {detalles.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} style={{ textAlign: "center", padding: "2rem", color: "#999" }}>
+                                    <td colSpan={7} style={{ textAlign: "center", padding: "2rem", color: "#999" }}>
                                         No hay productos en carritos
                                     </td>
                                 </tr>
                             ) : (
                                 detalles.map((d) => (
-                                    <tr key={`${d.id_carrito}-${d.id_producto}`}>
-
+                                    <tr
+                                        key={`${d.id_carrito}-${d.id_producto}`}
+                                        style={
+                                            editId === `${d.id_carrito}-${d.id_producto}`
+                                                ? { backgroundColor: "#cfe3f5", transition: "background 0.3s" }
+                                                : {}
+                                        }
+                                    >
                                         <td>{d.id_carrito}</td>
 
                                         <td>
-                                            {productos.find(p => p.id_producto === d.id_producto)?.nombre || d.id_producto}
+                                            {d.nombre_usuario
+                                                ? `${d.nombre_usuario} (${d.email_usuario})`
+                                                : d.email_usuario ?? "-"}
                                         </td>
 
+                                        <td>{d.nombre_producto ?? d.id_producto}</td>
                                         <td>{d.cantidad}</td>
-                                        <td>{d.precio_unitario} €</td>
+                                        <td>{Number(d.precio_unitario).toFixed(2)} €</td>
+
+                                        <td>
+                                            {d.fecha_agregado
+                                                ? new Date(d.fecha_agregado).toLocaleDateString("es-ES")
+                                                : "-"}
+                                        </td>
 
                                         <td>
                                             <div className="acciones">
-
                                                 <button
                                                     className="admin-btn admin-btn-edit"
                                                     onClick={() => handleEdit(d)}
+                                                    style={
+                                                        editId === `${d.id_carrito}-${d.id_producto}`
+                                                            ? { opacity: 0.4, cursor: "not-allowed" }
+                                                            : {}
+                                                    }
                                                 >
                                                     Editar
                                                 </button>
-
                                                 <button
                                                     className="admin-btn admin-btn-delete"
                                                     onClick={() => handleDelete(d.id_carrito, d.id_producto)}
                                                 >
                                                     Borrar
                                                 </button>
-
                                             </div>
                                         </td>
                                     </tr>
@@ -211,24 +242,38 @@ function AdminDetalleCarritos() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* FORM */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
                     <div className="admin-form">
 
-                        <h3>
-                            {editId ? "Editar producto en carrito" : "Añadir producto a carrito"}
-                        </h3>
+                        <h3>{editId ? "Editar producto en carrito" : "Añadir producto a carrito"}</h3>
 
                         <div className="admin-form-grid">
 
-                            <input
+                            <select
                                 className="admin-input"
-                                type="number"
                                 name="id_carrito"
-                                placeholder="ID Carrito"
                                 value={form.id_carrito}
                                 onChange={handleChange}
                                 disabled={!!editId}
-                            />
+                                style={
+                                    form.id_carrito
+                                        ? estadoColor(carritos.find(c => String(c.id_carrito) === String(form.id_carrito))?.estado)
+                                        : {}
+                                }
+                            >
+                                <option value="">-- Selecciona carrito --</option>
+                                {carritos.map(c => (
+                                    <option
+                                        key={c.id_carrito}
+                                        value={c.id_carrito}
+                                        style={estadoColor(c.estado)}
+                                    >
+                                        #{c.id_carrito} — {c.estado}
+                                    </option>
+                                ))}
+                            </select>
 
                             <select
                                 className="admin-input"
@@ -237,8 +282,8 @@ function AdminDetalleCarritos() {
                                 onChange={handleChange}
                                 disabled={!!editId}
                             >
-                                <option value="">Selecciona producto</option>
-                                {productos.map((p) => (
+                                <option value="">-- Selecciona producto --</option>
+                                {productos.map(p => (
                                     <option key={p.id_producto} value={p.id_producto}>
                                         {p.nombre}
                                     </option>
@@ -250,6 +295,7 @@ function AdminDetalleCarritos() {
                                 type="number"
                                 name="cantidad"
                                 placeholder="Cantidad"
+                                min={1}
                                 value={form.cantidad}
                                 onChange={handleChange}
                             />
@@ -259,6 +305,8 @@ function AdminDetalleCarritos() {
                                 type="number"
                                 name="precio_unitario"
                                 placeholder="Precio unitario"
+                                step="0.01"
+                                min={0}
                                 value={form.precio_unitario}
                                 onChange={handleChange}
                             />
@@ -275,12 +323,7 @@ function AdminDetalleCarritos() {
                                     className="admin-btn admin-btn-secondary"
                                     onClick={() => {
                                         setEditId(null);
-                                        setForm({
-                                            id_carrito: "",
-                                            id_producto: "",
-                                            cantidad: 1,
-                                            precio_unitario: "",
-                                        });
+                                        setForm({ id_carrito: "", id_producto: "", cantidad: 1, precio_unitario: "" });
                                     }}
                                 >
                                     Cancelar
