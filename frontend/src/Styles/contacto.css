@@ -1,0 +1,277 @@
+.contacto-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--cream);
+    padding-bottom: 6vh;
+}
+
+.contacto-hero {
+    text-align: center;
+    padding: 6vh 5vw;
+    background-color: var(--nav);
+    border-bottom: 2px solid var(--prim-color);
+}
+
+.contacto-hero h1 {
+    font-size: 2.5rem;
+    color: var(--sec-color);
+}
+
+.contacto-hero p {
+    margin-top: 1vh;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.contacto-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 4vh 6vw;
+}
+
+.contacto-card {
+    background: var(--nav);
+    border: 2px solid var(--prim-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.contacto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.contacto-card h2 {
+    color: var(--sec-color);
+    margin-bottom: 1rem;
+}
+
+.contacto-card p {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.contacto-card a {
+    color: var(--prim-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.contacto-form-section {
+    padding: 4vh 6vw;
+    text-align: center;
+}
+
+.contacto-form-section h2 {
+    margin-bottom: 2vh;
+    color: var(--sec-color);
+}
+
+.contacto-form {
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contacto-form input,
+.contacto-form textarea {
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--prim-color);
+    background-color: #FFFEFA;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 1rem;
+}
+
+.contacto-form button {
+    background-color: var(--sec-color);
+    color: var(--cream);
+    border: none;
+    padding: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1rem;
+}
+
+.contacto-form button:hover {
+    background-color: var(--prim-color);
+    transform: scale(1.03);
+}
+
+.politica-wrapper {
+    margin-top: 5vh;
+    padding: 4vh 6vw;
+    background: var(--nav);
+    border-top: 3px solid var(--prim-color);
+}
+
+.politica-title {
+    font-size: 2rem;
+    text-align: center;
+    color: var(--sec-color);
+    margin-bottom: 3vh;
+}
+
+.politica-title::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 3px;
+    background: var(--prim-color);
+    margin: 10px auto 0;
+    border-radius: 10px;
+}
+
+.politica-section {
+    background: #FFFEFA;
+    border: 1px solid #f0d7b8;
+    border-left: 5px solid var(--prim-color);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2vh;
+    transition: 0.3s ease;
+}
+
+.politica-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.politica-section h2 {
+    color: var(--sec-color);
+    margin-bottom: 0.8rem;
+}
+
+.politica-section p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.politica-section ul {
+    margin-top: 1rem;
+    padding-left: 1.2rem;
+}
+
+.politica-section ul li {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.politica-divider {
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--prim-color), transparent);
+    margin: 4vh auto;
+    width: 60%;
+    opacity: 0.5;
+}
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease;
+}
+
+.popup-box {
+    background: var(--nav);
+    border: 2px solid var(--prim-color);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    text-align: center;
+    min-width: 280px;
+    animation: popIn 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.check-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: var(--prim-color);
+    color: white;
+    border-radius: 50%;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 900px) {
+
+    .contacto-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contacto-hero h1 {
+        font-size: 2rem;
+    }
+
+    .politica-wrapper {
+        padding: 3vh 4vw;
+    }
+
+    .politica-section {
+        padding: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .contacto-hero {
+        padding: 4vh 4vw;
+    }
+
+    .contacto-hero h1 {
+        font-size: 1.6rem;
+    }
+
+    .contacto-hero p {
+        font-size: 0.95rem;
+    }
+
+    .contacto-grid {
+        grid-template-columns: 1fr;
+        padding: 3vh 4vw;
+    }
+
+    .contacto-card {
+        padding: 1.5rem;
+    }
+
+    .contacto-form {
+        width: 100%;
+    }
+
+    .politica-title {
+        font-size: 1.5rem;
+    }
+
+    .politica-section {
+        padding: 1rem;
+    }
+
+    .popup-box {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}

@@ -1,0 +1,215 @@
+.perfil-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--cream);
+    padding: 4vh 6vw;
+}
+
+.perfil-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--sec-color);
+    margin-bottom: 3vh;
+    position: relative;
+}
+
+.perfil-title::after {
+    content: "";
+    width: 100px;
+    height: 3px;
+    background: var(--prim-color);
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 10px;
+}
+
+.perfil-form {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    background: var(--nav);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 2px solid #f0d7b8;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--sec-color);
+    margin-left: 2px;
+}
+
+.form-group input {
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0c9a6;
+    background: #FFFEFA;
+    font-size: 1rem;
+    font-family: "Josefin Sans", sans-serif;
+    transition: 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--acc-color);
+    box-shadow: 0 0 0 3px rgba(246, 79, 26, 0.15);
+}
+
+.form-group input:disabled {
+    background: #f3f3f3;
+    color: #777;
+    border: 1px solid #ddd;
+    cursor: not-allowed;
+}
+
+.perfil-form button {
+    grid-column: span 2;
+    padding: 1rem;
+    border: none;
+    background: var(--sec-color);
+    color: var(--cream);
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.perfil-form button:hover {
+    background: var(--prim-color);
+    transform: scale(1.02);
+}
+
+.perfil-password {
+    margin-top: 6vh;
+    text-align: center;
+}
+
+.perfil-password h2 {
+    color: var(--sec-color);
+    margin-bottom: 2vh;
+}
+
+.perfil-password form {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--nav);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 2px solid #f0d7b8;
+}
+
+.perfil-password input {
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0c9a6;
+    background: #FFFEFA;
+}
+
+.perfil-password input:focus {
+    outline: none;
+    border-color: var(--acc-color);
+    box-shadow: 0 0 0 3px rgba(246, 79, 26, 0.15);
+}
+
+.perfil-password button {
+    padding: 1rem;
+    border: none;
+    background: var(--prim-color);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.perfil-password button:hover {
+    background: var(--sec-color);
+}
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease;
+}
+
+.popup-box {
+    background: var(--nav);
+    border: 2px solid var(--prim-color);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    text-align: center;
+    min-width: 280px;
+    animation: popIn 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.check-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: var(--prim-color);
+    color: white;
+    border-radius: 50%;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 900px) {
+
+    .perfil-form {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+    }
+
+    .perfil-form button {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .perfil-page {
+        padding: 3vh 4vw;
+    }
+
+    .perfil-title {
+        font-size: 1.7rem;
+    }
+
+    .perfil-form {
+        padding: 1.5rem;
+    }
+
+    .perfil-password form {
+        padding: 1.5rem;
+    }
+}
