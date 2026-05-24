@@ -15,7 +15,7 @@ import icon4 from "../../icons/4.png";
 import icon5 from "../../icons/5.png";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-function Nav({ onSearch }) {
+function Nav({}) {
 
     const { setIsCartOpen, totalItems } = useCart();
     const { user, logout } = useAuth();
@@ -29,7 +29,6 @@ function Nav({ onSearch }) {
     const navigate = useNavigate();
     const hideBanner = location.pathname.startsWith("/admin");
     const isAlimentacion = location.pathname === "/Alimentacion";
-
     const [searchParams] = useSearchParams();
 
     const seccionEnUrl = isAlimentacion
@@ -115,8 +114,21 @@ function Nav({ onSearch }) {
                         placeholder="Buscar producto..."
                         value={searchQuery}
                         onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            onSearch(e.target.value.trim());
+                            const value = e.target.value;
+                            setSearchQuery(value);
+
+                            const params = new URLSearchParams(searchParams);
+
+                            if (value.trim()) {
+                                params.set("search", value.trim());
+                            } else {
+                                params.delete("search");
+                            }
+
+                            navigate({
+                                pathname: location.pathname,
+                                search: params.toString()
+                            });
                         }}
                     />
                 </div>
