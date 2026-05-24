@@ -13,9 +13,10 @@ import icon2 from "../../icons/2.png";
 import icon3 from "../../icons/3.png";
 import icon4 from "../../icons/4.png";
 import icon5 from "../../icons/5.png";
+import titulo from '../../icons/titulo_web.png';
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-function Nav({}) {
+function Nav() {
 
     const { setIsCartOpen, totalItems } = useCart();
     const { user, logout } = useAuth();
@@ -23,6 +24,7 @@ function Nav({}) {
     const [showAuth, setShowAuth] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
+    const [alimentacionOpen, setAlimentacionOpen] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const banners = [banner1, banner2, banner3];
     const location = useLocation();
@@ -30,6 +32,7 @@ function Nav({}) {
     const hideBanner = location.pathname.startsWith("/admin");
     const isAlimentacion = location.pathname === "/Alimentacion";
     const [searchParams] = useSearchParams();
+    const [navOpen, setNavOpen] = useState(false);
 
     const seccionEnUrl = isAlimentacion
         ? searchParams.get("seccion")
@@ -97,7 +100,9 @@ function Nav({}) {
                     className="logo-navbar"
                     onClick={goHome}
                 />
-
+                <a href="/" className="navbar-title">
+                    <img src={titulo} alt="Japanda" className="navbar-title-img" />
+                </a>
                 <div className="nav-searchbar">
                     <svg xmlns="http://www.w3.org/2000/svg" className="search-svg" viewBox="0 0 24 24" fill="none">
                         <path
@@ -138,10 +143,25 @@ function Nav({}) {
                         <span className="nav-text">Admin Panel</span>
                     </a>
                 )}
+                <button
+                    className="hamburger-btn"
+                    onClick={() => setNavOpen(!navOpen)}
+                    aria-label="Abrir menú"
+                >
+                    {navOpen ? (
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="#e34f1d" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                    ) : (
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 6h16M4 12h16M4 18h16" stroke="#e34f1d" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                    )}
+                </button>
+                <nav className={`navbar ${navOpen ? "nav-open" : ""}`}>
 
-                <nav className="navbar">
-
-                    <div className="navbar-item-wrapper">
+                    <div className={`navbar-item-wrapper ${alimentacionOpen ? "open" : ""}`}
+                        onClick={() => setAlimentacionOpen(!alimentacionOpen)}>
                         <a href="/Alimentacion" className="navbar-element">
                             <span className="nav-text">
                                 Alimentación&nbsp;
@@ -236,7 +256,7 @@ function Nav({}) {
 
                             {user && (
                                 <div className={`user-dropdown ${showDropdown ? "open" : ""}`}>
-                                    
+
                                     <div className="user-dropdown-header">
                                         <span className="user-dropdown-name">{user.nombre}</span>
                                         <span className="user-dropdown-email">{user.email}</span>
@@ -276,6 +296,7 @@ function Nav({}) {
                     </div>
 
                 </nav>
+
             </div>
 
             {showAuth && <Auth onClose={() => setShowAuth(false)} />}

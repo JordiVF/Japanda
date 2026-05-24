@@ -46,7 +46,7 @@ function Shop({ categoriaId, subcategoriaIds }) {
                 setProducts(data);
 
             } catch (err) {
-                setError("Error cargando productos");
+                setError(err.data.error || "Error cargando productos");
             } finally {
                 setLoading(false);
             }

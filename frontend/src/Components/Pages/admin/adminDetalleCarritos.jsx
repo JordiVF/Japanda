@@ -6,44 +6,44 @@ import "../../../Styles/adminVista.css";
 
 const API_DETALLES = "http://localhost:3000/api/carrito-detalle";
 const API_PRODUCTOS = "http://localhost:3000/api/productos";
-const API_CARRITOS  = "http://localhost:3000/api/carrito";
+const API_CARRITOS = "http://localhost:3000/api/carrito";
 
 function AdminDetalleCarritos() {
-    const navigate  = useNavigate();
-    const formRef   = useRef(null);
+    const navigate = useNavigate();
+    const formRef = useRef(null);
 
     const estadoColor = (estado) => {
         switch (estado) {
-            case "activo":     return { background: "#d4edda", color: "#155724" };
-            case "inactivo":   return { background: "#f8d7da", color: "#721c24" };
+            case "activo": return { background: "#d4edda", color: "#155724" };
+            case "inactivo": return { background: "#f8d7da", color: "#721c24" };
             case "abandonado": return { background: "#fff3cd", color: "#856404" };
             case "convertido": return { background: "#cfe2ff", color: "#084298" };
-            default:           return { background: "#fff",   color: "#333" };
+            default: return { background: "#fff", color: "#333" };
         }
     };
 
-    const [detalles,  setDetalles]  = useState([]);
+    const [detalles, setDetalles] = useState([]);
     const [productos, setProductos] = useState([]);
-    const [carritos,  setCarritos]  = useState([]);
+    const [carritos, setCarritos] = useState([]);
 
     const [busquedaId, setBusquedaId] = useState("");
-    const [editId,     setEditId]     = useState(null);
+    const [editId, setEditId] = useState(null);
 
     const [form, setForm] = useState({
-        id_carrito:      "",
-        id_producto:     "",
-        cantidad:        1,
+        id_carrito: "",
+        id_producto: "",
+        cantidad: 1,
         precio_unitario: "",
     });
 
-    const fetchDetalles  = async () => {
-        try { const res = await axios.get(API_DETALLES);  setDetalles(res.data);  } catch (err) { console.error(err); }
+    const fetchDetalles = async () => {
+        try { const res = await axios.get(API_DETALLES); setDetalles(res.data); } catch (err) { console.error(err); }
     };
     const fetchProductos = async () => {
         try { const res = await axios.get(API_PRODUCTOS); setProductos(res.data); } catch (err) { console.error(err); }
     };
-    const fetchCarritos  = async () => {
-        try { const res = await axios.get(API_CARRITOS);  setCarritos(res.data);  } catch (err) { console.error(err); }
+    const fetchCarritos = async () => {
+        try { const res = await axios.get(API_CARRITOS); setCarritos(res.data); } catch (err) { console.error(err); }
     };
 
     useEffect(() => {
@@ -78,7 +78,7 @@ function AdminDetalleCarritos() {
             const producto = productos.find(p => String(p.id_producto) === String(value));
             setForm(prev => ({
                 ...prev,
-                id_producto:     value,
+                id_producto: value,
                 precio_unitario: producto ? producto.precio : "",
             }));
             return;
@@ -90,9 +90,9 @@ function AdminDetalleCarritos() {
     const handleEdit = (d) => {
         setEditId(`${d.id_carrito}-${d.id_producto}`);
         setForm({
-            id_carrito:      d.id_carrito,
-            id_producto:     d.id_producto,
-            cantidad:        d.cantidad,
+            id_carrito: d.id_carrito,
+            id_producto: d.id_producto,
+            cantidad: d.cantidad,
             precio_unitario: d.precio_unitario,
         });
         setTimeout(() =>
@@ -112,17 +112,22 @@ function AdminDetalleCarritos() {
                 await axios.put(
                     `${API_DETALLES}/${form.id_carrito}/${form.id_producto}`,
                     {
-                        cantidad:        Number(form.cantidad),
+                        cantidad: Number(form.cantidad),
                         precio_unitario: Number(form.precio_unitario),
                     }
+
                 );
+                window.location.reload();
             } else {
                 await axios.post(API_DETALLES, {
-                    id_carrito:      Number(form.id_carrito),
-                    id_producto:     Number(form.id_producto),
-                    cantidad:        Number(form.cantidad),
+                    id_carrito: Number(form.id_carrito),
+                    id_producto: Number(form.id_producto),
+                    cantidad: Number(form.cantidad),
                     precio_unitario: Number(form.precio_unitario),
-                });
+                }
+
+                ); 
+                window.location.reload();
             }
 
             setForm({ id_carrito: "", id_producto: "", cantidad: 1, precio_unitario: "" });
@@ -145,7 +150,6 @@ function AdminDetalleCarritos() {
 
                 <h1 style={{ margin: "20px 0" }}>Detalle Carritos</h1>
 
-                {/* BUSCADOR */}
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
@@ -165,7 +169,6 @@ function AdminDetalleCarritos() {
                     </button>
                 </div>
 
-                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
@@ -243,7 +246,6 @@ function AdminDetalleCarritos() {
                     </table>
                 </div>
 
-                {/* FORM */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
                     <div className="admin-form">
 
@@ -315,6 +317,7 @@ function AdminDetalleCarritos() {
 
                         <div className="admin-form-actions">
                             <button className="admin-btn admin-btn-primary" onClick={handleSubmit}>
+
                                 {editId ? "Actualizar" : "Añadir"}
                             </button>
 
@@ -324,6 +327,7 @@ function AdminDetalleCarritos() {
                                     onClick={() => {
                                         setEditId(null);
                                         setForm({ id_carrito: "", id_producto: "", cantidad: 1, precio_unitario: "" });
+                                        window.location.reload();
                                     }}
                                 >
                                     Cancelar

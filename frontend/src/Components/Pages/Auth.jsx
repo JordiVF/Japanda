@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../Additionals/AuthContext";
 import "../../Styles/auth.css";
+import titulo from '../../icons/titulo_web.png';
 
 const API = "http://localhost:3000";
 
@@ -93,7 +94,6 @@ function Auth({ onClose }) {
             window.location.reload();
             setLoginForm({ email: "", password: "" });
 
-            // Cierra el modal tras 1.5s, sin redirigir a ningún sitio
             setTimeout(() => onClose?.(), 1500);
 
         } catch (err) {
@@ -151,7 +151,6 @@ function Auth({ onClose }) {
         setSuccess("");
     };
 
-    // Cierra al pulsar overlay, sin propagar el click al sheet
     const handleOverlayClick = () => onClose?.();
     const handleSheetClick = (e) => e.stopPropagation();
 
@@ -168,6 +167,11 @@ function Auth({ onClose }) {
                 >
                     ✕
                 </button>
+
+                <div style={{ textAlign: 'center', marginBottom: '1em' }}>
+                    <img src={titulo} alt="Japanda" style={{ height: '6em', width: 'auto' }} />
+                </div>
+
 
                 <div className="auth-header">
                     <h1 className="auth-title">

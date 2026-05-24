@@ -29,6 +29,18 @@ body {
 
 }
 
+
+.navbar-title {
+    display: none;
+}
+
+.navbar-title-img {
+    height: 2em;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
 .navbar-wrapper {
     display: grid;
     grid-template-columns: 120px 1fr;
@@ -339,6 +351,25 @@ body {
         width: 10px;
         height: 10px;
     }
+
+    .hamburger-btn {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        justify-self: end;
+        align-self: center;
+    }
+
+    .nav-searchbar {
+        grid-column: 1 / -1;
+        grid-row: 2 / 3;
+        padding: 0.5em;
+        display: none;
+    }
+
+    .navbar.nav-open {
+        grid-column: 1 / -1;
+        grid-row: 3 / 4;
+    }
 }
 
 @media (max-width: 480px) {
@@ -523,6 +554,194 @@ body {
 }
 
 .dropdown-item--active {
-    background-color: #e34f1d;
+    background-color: var(--prim-color);
     color: white;
+    font-weight: 600;
+    border-left: 3px solid #8b2500;
+    padding-left: 13px; 
+    position: relative;
+}
+
+.hamburger-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .navbar-wrapper {
+        grid-template-columns: 80px 1fr auto auto 60px;
+        grid-template-rows: auto auto;
+        padding: 0 0.6em;
+        position: relative;
+        align-items: center;
+    }
+
+    .logo-navbar {
+        width: 5em;
+        height: 6em;
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    .navbar-title {
+        display: flex;
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        justify-self: center;
+        align-self: center;
+        align-items: center;
+    }
+
+    .navbar-title-img {
+        height: 4em;
+        width: auto;
+        object-fit: contain;
+        display: block;
+    }
+
+    .navbar-element-admin {
+        grid-column: 3 / 4;
+        grid-row: 1 / 2;
+        justify-self: center;
+        align-self: center;
+        margin: 0 0.4em;
+        width: auto;
+    }
+
+    .hamburger-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.4em;
+        color: var(--prim-color);
+        align-self: center;
+        grid-column: 5 / 6;
+        grid-row: 1 / 2;
+        justify-self: end;
+    }
+
+    .navbar {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        width: 100%;
+        grid-column: 1 / -1;
+        grid-row-start: 2;
+        padding: 0.8em 0.4em 1em;
+        gap: 0.2em;
+        border-top: 1px solid rgba(227, 79, 29, 0.15);
+    }
+
+    .navbar.nav-open {
+        display: flex;
+    }
+
+    .navbar-element {
+        font-size: 1.1em;
+        margin: 0.3em 0.4em;
+        padding: 0.25em 0;
+        width: 100%;
+    }
+
+    .input-buscador {
+        display: none;
+    }
+
+    .nav-searchbar {
+        width: 100%;
+        padding: 0.5em 0.4em 0;
+        grid-column: 1 / -1;
+        grid-row: 2 / 3;
+    }
+
+    .navbar-svg-element-wrapper {
+        justify-content: flex-start;
+        gap: 0.2em;
+        width: 100%;
+    }
+
+    .side-container {
+        margin: 0.3em 0.4em;
+    }
+
+    .user-dropdown {
+        right: 0;
+        left: auto;
+        min-width: 190px;
+        max-width: calc(100vw - 1.2em);
+    }
+
+    .dropdown-menu {
+        position: static;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        min-width: 100%;
+        border-radius: 6px;
+        margin-top: 0.3em;
+        display: none;
+    }
+
+    .navbar-item-wrapper.open .dropdown-menu {
+        display: block;
+    }
+
+    .navbar-item-wrapper.open .svgFlecha {
+        transform: rotate(180deg);
+    }
+
+    .banner-carousel,
+    .banner-publicidad {
+        width: 100%;
+    }
+
+    .imagenUsuario {
+        height: 40px;
+        width: 40px;
+    }
+
+    .nav-cart-count {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+
+    .admin-btn-prods {
+        font-size: 0.9em;
+        padding: 1.5vh;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .navbar-wrapper {
+        grid-template-columns: 65px 1fr;
+        padding: 0 0.4em;
+    }
+
+    .logo-navbar {
+        width: 4em;
+        height: 5em;
+    }
+
+    .navbar-element {
+        font-size: 1em;
+    }
+
+    .imagenUsuario {
+        height: 34px;
+        width: 34px;
+    }
+
+    .user-dropdown {
+        min-width: 170px;
+    }
+
+    .admin-image-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

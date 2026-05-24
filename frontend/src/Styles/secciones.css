@@ -1,29 +1,61 @@
-.seccion{
+.seccion {
     background-color: #e34f1d;
     width: 10vw;
     height: 10vh;
     color: white;
     font-size: 20px;
     text-align: center;
-    padding-top: 4   vh;
     text-decoration: none;
     border-radius: 6px;
     padding: 3.8vh 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    border: 2px solid transparent;
 }
 
-.seccionesContainer{
-
+.seccionesContainer {
     display: flex;
     justify-content: space-evenly;
     margin-top: 5vh;
     padding: 0 40vh;
     border-radius: 10px;
-
 }
 
-.seccion:hover{
-    transform: translateY(-2px);
+.seccion:hover {
     transform: scale(1.1);
-    transition-duration: 0.3s;
-    color:  #FFF8E8;
+    color: #FFF8E8;
+    box-shadow: 0 4px 12px rgba(227, 79, 29, 0.4);
+}
+
+.seccion--active {
+    background-color: #8b2500;
+    border: 2px solid #ffb347;
+    box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.35), 0 4px 16px rgba(139, 37, 0, 0.5);
+    transform: scale(1.07);
+    font-weight: 700;
+    color: #ffe8d6;
+}
+
+@media (max-width: 768px) {
+    .seccionesContainer {
+        padding: 0 1em;
+        gap: 0.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 3vh;
+    }
+
+    .seccion {
+        width: auto;
+        height: auto;
+        padding: 0.6em 1.2em;
+        font-size: 0.95em;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .seccion {
+        font-size: 0.85em;
+        padding: 0.5em 1em;
+    }
 }

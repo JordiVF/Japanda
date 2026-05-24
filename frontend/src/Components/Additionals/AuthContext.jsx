@@ -1,4 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
+
+// eslint-disable-next-line no-unused-vars
+import titulo from '../../icons/titulo_web.png'
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
 const AuthContext = createContext();
