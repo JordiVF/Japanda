@@ -250,13 +250,62 @@
 @media (max-width: 640px) {
     .pd-sheet {
         padding: 16px 18px 32px;
+        max-height: 95dvh;
     }
 
     .pd-name {
         font-size: 1.35rem;
     }
 
+    .pd-price {
+        font-size: 1.3rem;
+    }
+
     .pd-add-btn {
         width: 100%;
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .pd-content {
+        gap: 20px;
+    }
+
+    .pd-image-frame {
+        border-radius: 14px;
+    }
+
+    .pd-close {
+        top: 16px;
+        right: 16px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .pd-description {
+        font-size: 0.93rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pd-sheet {
+        padding: 12px 14px 28px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .pd-name {
+        font-size: 1.2rem;
+    }
+
+    .pd-price {
+        font-size: 1.2rem;
+    }
+
+    .pd-info {
+        gap: 12px;
+    }
+
+    .pd-handle {
+        margin-bottom: 16px;
     }
 }
