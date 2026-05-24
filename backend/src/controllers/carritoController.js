@@ -65,7 +65,20 @@ const createCarrito = async (req, res) => {
 
     const estadosValidos = ['activo', 'inactivo', 'abandonado', 'convertido'];
     if (!estadosValidos.includes(estado)) {
-      return res.status(400).json({ error: 'Estado inválido. Estados válidos: ' + estadosValidos.join(', ') });
+      return res.status(400).json({ error: 'Estado inválido' });
+    }
+
+    const { data: carritoActivo } = await supabase
+      .from('carritos')
+      .select('id_carrito')
+      .eq('id_usuario', id_usuario)
+      .eq('estado', 'activo')
+      .single();
+
+    if (carritoActivo) {
+      return res.status(409).json({
+        error: 'El usuario ya tiene un carrito activo'
+      });
     }
 
     const { data: usuarioExistente } = await supabase
@@ -85,9 +98,16 @@ const createCarrito = async (req, res) => {
 
     if (error) throw error;
 
-    res.status(201).json({ message: 'Carrito creado exitosamente', data: data[0] });
+    res.status(201).json({
+      message: 'Carrito creado exitosamente',
+      data: data[0]
+    });
+
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear carrito', details: error.message });
+    res.status(500).json({
+      error: 'Error al crear carrito',
+      details: error.message
+    });
   }
 };
 
