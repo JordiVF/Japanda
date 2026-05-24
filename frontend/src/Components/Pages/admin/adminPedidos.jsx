@@ -1,20 +1,44 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import "../../../Styles/adminVista.css";
 
 const ESTADOS = ["pendiente", "procesando", "enviado", "entregado", "cancelado"];
 
 function AdminPedidos() {
+    const [usuarios, setUsuarios] = useState([]);
     const [pedidos, setPedidos] = useState([]);
     const navigate = useNavigate();
     const formRef = useRef(null);
+
     const [busquedaId, setBusquedaId] = useState("");
     const [editId, setEditId] = useState(null);
-    const [form, setForm] = useState({ estado: "pendiente", total: "" });
+
+    const [createForm, setCreateForm] = useState({
+        id_usuario: "",
+        fecha: "",
+        estado: "pendiente",
+        total: "",
+    });
+
+    const [editForm, setEditForm] = useState({
+        estado: "pendiente",
+        total: "",
+    });
 
     const API = "http://localhost:3000/api/pedidos";
+    const API_USUARIOS = "http://localhost:3000/api/usuarios";
+
+    const fetchUsuarios = async () => {
+        try {
+            const res = await axios.get(API_USUARIOS);
+            setUsuarios(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const fetchPedidos = async () => {
         try {
@@ -27,24 +51,22 @@ function AdminPedidos() {
 
     useEffect(() => {
         fetchPedidos();
+        fetchUsuarios();
     }, []);
-
     const handleDelete = async (id) => {
-        const confirmado = window.confirm(`¿Seguro que quieres eliminar el pedido #${id}? Esta acción no se puede deshacer.`);
+        const confirmado = window.confirm(
+            `¿Seguro que quieres eliminar el pedido #${id}? Esta acción no se puede deshacer.`
+        );
         if (!confirmado) return;
 
         try {
             await axios.delete(`${API}/${id}`);
-            if (editId === id) {
-                setEditId(null);
-                setForm({ estado: "pendiente", total: "" });
-            }
+            if (editId === id) setEditId(null);
             fetchPedidos();
         } catch (err) {
             alert(err.response?.data?.error || "Error al eliminar el pedido");
         }
     };
-
     const handleSearch = async () => {
         if (!busquedaId) return fetchPedidos();
         try {
@@ -55,26 +77,63 @@ function AdminPedidos() {
         }
     };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleCreateChange = (e) => {
+        const { name, value } = e.target;
+        setCreateForm({ ...createForm, [name]: value });
     };
 
-    const handleSubmit = async () => {
-        if (!form.estado) {
-            alert("El estado es obligatorio");
-            return;
-        }
-        if (!editId) {
-            alert("Solo se pueden editar pedidos existentes");
-            return;
-        }
 
+    const handleCreateSubmit = async () => {
+        try {
+            if (!createForm.id_usuario || !createForm.total) {
+                alert("Usuario y total son obligatorios");
+                return;
+            }
+
+            await axios.post(API, {
+                id_usuario: Number(createForm.id_usuario),
+                fecha: createForm.fecha
+                    ? new Date(createForm.fecha).toISOString()
+                    : new Date().toISOString(),
+                estado: createForm.estado,
+                total: Number(createForm.total),
+            });
+
+            setCreateForm({
+                id_usuario: "",
+                fecha: "",
+                estado: "pendiente",
+                total: "",
+            });
+
+            fetchPedidos();
+        } catch (err) {
+            alert(err.response?.data?.error || "Error al crear pedido");
+        }
+    };
+    const handleEdit = (pedido) => {
+        setEditId(pedido.id_pedido);
+        setEditForm({
+            estado: pedido.estado || "pendiente",
+            total: pedido.total || "",
+        });
+
+        setTimeout(() => {
+            formRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 50);
+    };
+
+    const handleEditChange = (e) => {
+        setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    };
+
+    const handleUpdate = async () => {
         try {
             await axios.put(`${API}/${editId}`, {
-                estado: form.estado,
-                ...(form.total !== "" && { total: Number(form.total) }),
+                estado: editForm.estado,
+                total: Number(editForm.total),
             });
-            setForm({ estado: "pendiente", total: "" });
+
             setEditId(null);
             fetchPedidos();
         } catch (err) {
@@ -82,31 +141,27 @@ function AdminPedidos() {
         }
     };
 
-    const handleEdit = (pedido) => {
-        setEditId(pedido.id_pedido);
-        setForm({
-            estado: pedido.estado || "pendiente",
-            total: pedido.total || "",
-        });
-        setTimeout(() => {
-            formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 50);
-    };
-
     const estadoColor = (estado) => {
         switch (estado) {
-            case "pendiente": return { background: "#fff3cd", color: "#856404" };
-            case "procesando": return { background: "#cfe2ff", color: "#084298" };
-            case "enviado": return { background: "#d1ecf1", color: "#0c5460" };
-            case "entregado": return { background: "#d4edda", color: "#155724" };
-            case "cancelado": return { background: "#f8d7da", color: "#721c24" };
-            default: return {};
+            case "pendiente":
+                return { background: "#fff3cd", color: "#856404" };
+            case "procesando":
+                return { background: "#cfe2ff", color: "#084298" };
+            case "enviado":
+                return { background: "#d1ecf1", color: "#0c5460" };
+            case "entregado":
+                return { background: "#d4edda", color: "#155724" };
+            case "cancelado":
+                return { background: "#f8d7da", color: "#721c24" };
+            default:
+                return {};
         }
     };
 
     return (
         <div className="admin-vista">
             <div className="admin-vista-wrapper">
+
                 <div className="admin-header">
                     <button className="back-btn" onClick={() => navigate(-1)}>
                         ← Volver
@@ -115,7 +170,8 @@ function AdminPedidos() {
 
                 <h1 style={{ margin: "20px 0" }}>Pedidos</h1>
 
-                {/* BUSCADOR */}
+
+
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
@@ -131,7 +187,6 @@ function AdminPedidos() {
                     </button>
                 </div>
 
-                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
@@ -144,49 +199,32 @@ function AdminPedidos() {
                                 <th>Acciones</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {pedidos.map((p) => (
-                                <tr
-                                    key={p.id_pedido}
-                                    style={
-                                        editId === p.id_pedido
-                                            ? { backgroundColor: "#cfe3f5", transition: "background 0.3s" }
-                                            : {}
-                                    }
-                                >
+                                <tr key={p.id_pedido}>
                                     <td>{p.id_pedido}</td>
                                     <td>{p.id_usuario}</td>
-                                    <td>{new Date(p.fecha).toLocaleDateString("es-ES", {
-                                        day: "2-digit", month: "2-digit", year: "numeric",
-                                        hour: "2-digit", minute: "2-digit"
-                                    })}</td>
+                                    <td>{new Date(p.fecha).toLocaleString()}</td>
+
                                     <td>
-                                        <span style={{
-                                            ...estadoColor(p.estado),
-                                            padding: "3px 10px",
-                                            borderRadius: "99px",
-                                            fontSize: "0.8em",
-                                            fontWeight: 700,
-                                        }}>
+                                        <span style={{ ...estadoColor(p.estado), padding: "3px 10px", borderRadius: "99px" }}>
                                             {p.estado}
                                         </span>
                                     </td>
+
                                     <td>{Number(p.total).toFixed(2)} €</td>
+
                                     <td>
                                         <div className="acciones">
-                                            <button
-                                                className="admin-btn admin-btn-edit"
-                                                onClick={() => handleEdit(p)}
-                                                style={editId === p.id_pedido ? { opacity: 0.4, cursor: "not-allowed" } : {}}
-                                            >
+                                            <button className="admin-btn admin-btn-edit" onClick={() => handleEdit(p)}>
                                                 Editar
                                             </button>
-                                            <button
-                                                className="admin-btn admin-btn-delete"
-                                                onClick={() => handleDelete(p.id_pedido)}
-                                            >
+
+                                            <button className="admin-btn admin-btn-delete" onClick={() => handleDelete(p.id_pedido)}>
                                                 Borrar
                                             </button>
+
                                             <button
                                                 className="admin-btn admin-btn-secondary"
                                                 onClick={() => navigate(`/admin/detalle-pedidos?pedido=${p.id_pedido}`)}
@@ -201,9 +239,8 @@ function AdminPedidos() {
                     </table>
                 </div>
 
-                {/* FORM EDICIÓN */}
                 {editId && (
-                    <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
+                    <div className="admin-section" ref={formRef}>
                         <div className="admin-form">
                             <h3>Editar pedido #{editId}</h3>
 
@@ -211,39 +248,139 @@ function AdminPedidos() {
                                 <select
                                     className="admin-input"
                                     name="estado"
-                                    value={form.estado}
-                                    onChange={handleChange}
+                                    value={editForm.estado}
+                                    onChange={handleEditChange}
                                 >
                                     {ESTADOS.map((e) => (
-                                        <option key={e} value={e}>{e}</option>
+                                        <option key={e} value={e}>
+                                            {e}
+                                        </option>
                                     ))}
                                 </select>
 
                                 <input
                                     className="admin-input"
-                                    type="number"
                                     name="total"
-                                    placeholder="Total (opcional)"
-                                    value={form.total}
-                                    onChange={handleChange}
+                                    type="number"
+                                    value={editForm.total}
+                                    onChange={handleEditChange}
                                 />
                             </div>
 
                             <div className="admin-form-actions">
-                                <button className="admin-btn admin-btn-primary" onClick={handleSubmit}>
+                                <button className="admin-btn admin-btn-primary" onClick={handleUpdate}>
                                     Actualizar
                                 </button>
+
                                 <button
                                     className="admin-btn admin-btn-secondary"
-                                    onClick={() => { setEditId(null); setForm({ estado: "pendiente", total: "" }); }}
+                                    onClick={() => setEditId(null)}
                                 >
                                     Cancelar
                                 </button>
                             </div>
                         </div>
                     </div>
-                )}
 
+
+                )}
+                {/* CREATE FORM */}
+                {/* CREATE FORM */}
+                <div className="admin-section" style={{ marginTop: "1.5rem" }}>
+                    <div className="admin-form">
+                        <h3>Crear pedido</h3>
+
+                        <div className="admin-form-grid">
+
+                            {/* USUARIO SELECT */}
+                            <select
+                                className="admin-input"
+                                name="id_usuario"
+                                value={createForm.id_usuario}
+                                onChange={handleCreateChange}
+                            >
+                                <option value="">-- Selecciona usuario --</option>
+                                {usuarios.map((u) => (
+                                    <option key={u.id_usuario} value={u.id_usuario}>
+                                        {u.id_usuario} - {u.nombre || u.email || "Usuario"}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {/* FECHA */}
+                            <input
+                                className="admin-input"
+                                type="datetime-local"
+                                name="fecha"
+                                value={createForm.fecha}
+                                onChange={handleCreateChange}
+                            />
+
+                            {/* TOTAL */}
+                            <input
+                                className="admin-input"
+                                type="number"
+                                name="total"
+                                placeholder="Total (€)"
+                                value={createForm.total}
+                                onChange={handleCreateChange}
+                            />
+
+                            {/* ESTADO CON COLOR */}
+                            <div
+                                style={{
+                                    ...estadoColor(createForm.estado),
+                                    padding: "10px",
+                                    borderRadius: "8px",
+                                }}
+                            >
+                                <select
+                                    name="estado"
+                                    value={createForm.estado}
+                                    onChange={handleCreateChange}
+                                    style={{
+                                        width: "100%",
+                                        border: "none",
+                                        outline: "none",
+                                        background: "transparent",
+                                        color: "inherit",
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    {ESTADOS.map((e) => (
+                                        <option key={e} value={e}>
+                                            {e}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div className="admin-form-actions">
+                            <button
+                                className="admin-btn admin-btn-primary"
+                                onClick={handleCreateSubmit}
+                            >
+                                Crear pedido
+                            </button>
+
+                            <button
+                                className="admin-btn admin-btn-secondary"
+                                onClick={() =>
+                                    setCreateForm({
+                                        id_usuario: "",
+                                        fecha: "",
+                                        estado: "pendiente",
+                                        total: "",
+                                    })
+                                }
+                            >
+                                Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

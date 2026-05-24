@@ -4,25 +4,36 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import "../../../Styles/adminVista.css";
 
-const API_DETALLES  = "http://localhost:3000/api/detallespedidos";
+const API_DETALLES = "http://localhost:3000/api/detallespedidos";
 const API_PRODUCTOS = "http://localhost:3000/api/productos";
+const API_PEDIDOS = "http://localhost:3000/api/pedidos";
 
 function AdminDetallesPedidos() {
-    const navigate      = useNavigate();
-    const formRef       = useRef(null);
+    const [pedidos, setPedidos] = useState([]);
+    const navigate = useNavigate();
+    const formRef = useRef(null);
     const [searchParams] = useSearchParams();
 
-    const [detalles,  setDetalles]  = useState([]);
+    const [detalles, setDetalles] = useState([]);
     const [productos, setProductos] = useState([]);
     const [busquedaId, setBusquedaId] = useState("");
-    const [editId,     setEditId]     = useState(null);
+    const [editId, setEditId] = useState(null);
 
     const [form, setForm] = useState({
-        id_pedido:       "",
-        id_producto:     "",
-        cantidad:        "",
+        id_pedido: "",
+        id_producto: "",
+        cantidad: "",
         precio_unitario: ""
     });
+
+    const fetchPedidos = async () => {
+        try {
+            const res = await axios.get(API_PEDIDOS);
+            setPedidos(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -44,6 +55,8 @@ function AdminDetallesPedidos() {
 
     useEffect(() => {
         fetchProductos();
+        fetchPedidos();
+
         const pedidoParam = searchParams.get("pedido");
         if (pedidoParam) {
             setBusquedaId(pedidoParam);
@@ -86,7 +99,7 @@ function AdminDetallesPedidos() {
             const producto = productos.find(p => String(p.id_producto) === String(value));
             setForm(prev => ({
                 ...prev,
-                id_producto:     value,
+                id_producto: value,
                 precio_unitario: producto ? producto.precio : "",
             }));
             return;
@@ -98,9 +111,9 @@ function AdminDetallesPedidos() {
     const handleEdit = (d) => {
         setEditId(d.id_detalle);
         setForm({
-            id_pedido:       d.id_pedido,
-            id_producto:     d.id_producto,
-            cantidad:        d.cantidad,
+            id_pedido: d.id_pedido,
+            id_producto: d.id_producto,
+            cantidad: d.cantidad,
             precio_unitario: d.precio_unitario
         });
         setTimeout(() =>
@@ -116,9 +129,9 @@ function AdminDetallesPedidos() {
         }
 
         const payload = {
-            id_pedido:       Number(form.id_pedido),
-            id_producto:     Number(form.id_producto),
-            cantidad:        Number(form.cantidad),
+            id_pedido: Number(form.id_pedido),
+            id_producto: Number(form.id_producto),
+            cantidad: Number(form.cantidad),
             precio_unitario: Number(form.precio_unitario)
         };
 
@@ -149,7 +162,6 @@ function AdminDetallesPedidos() {
 
                 <h1 style={{ margin: "20px 0" }}>Detalles de pedidos</h1>
 
-                {/* BUSCADOR */}
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
@@ -165,8 +177,6 @@ function AdminDetallesPedidos() {
                         Reset
                     </button>
                 </div>
-
-                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
@@ -234,20 +244,26 @@ function AdminDetallesPedidos() {
                     </table>
                 </div>
 
-                {/* FORM */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
                     <div className="admin-form">
                         <h3>{editId ? "Editar detalle" : "Crear detalle"}</h3>
 
                         <div className="admin-form-grid">
-                            <input
+                            <select
                                 className="admin-input"
                                 name="id_pedido"
-                                placeholder="ID Pedido"
                                 value={form.id_pedido}
                                 onChange={handleChange}
                                 disabled={!!editId}
-                            />
+                            >
+                                <option value="">-- Selecciona pedido --</option>
+
+                                {pedidos.map((p) => (
+                                    <option key={p.id_pedido} value={p.id_pedido}>
+                                        Pedido #{p.id_pedido}
+                                    </option>
+                                ))}
+                            </select>
 
                             <select
                                 className="admin-input"

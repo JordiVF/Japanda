@@ -3,13 +3,14 @@ import '../../Styles/shop.css';
 import ProductCard from "../Pages/ProductCard";
 import TextToShow from "../Additionals/TextToShow";
 
-function Shop({ categoriaId, searchQuery, subcategoriaIds }) {
+function Shop({ categoriaId, searchQuery }) {
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+
         const fetchProducts = async () => {
             try {
                 setLoading(true);
@@ -18,9 +19,6 @@ function Shop({ categoriaId, searchQuery, subcategoriaIds }) {
                 const params = new URLSearchParams();
                 if (categoriaId) params.append('id_categoria', categoriaId);
                 if (searchQuery) params.append('nombre', searchQuery);
-                if (subcategoriaIds?.length) {
-                    subcategoriaIds.forEach(id => params.append('id_subcategoria', id));
-                }
 
                 const url = `http://localhost:3000/api/productos${params.toString() ? '?' + params.toString() : ''}`;
 
@@ -42,7 +40,8 @@ function Shop({ categoriaId, searchQuery, subcategoriaIds }) {
         };
 
         fetchProducts();
-    }, [categoriaId, searchQuery, subcategoriaIds]);
+
+    }, [categoriaId, searchQuery]);
 
     return (
         <section className="shop">

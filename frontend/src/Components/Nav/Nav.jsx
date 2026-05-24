@@ -204,7 +204,7 @@ function Nav({ onSearch }) {
                                     <hr className="user-dropdown-divider" />
                                     <a href="/perfil" className="user-dropdown-item">👤 Mis datos</a>
                                     <a href="/pedidos" className="user-dropdown-item">📦 Mis pedidos</a>
-                                    <a href="/soporte" className="user-dropdown-item">💬 Atención al cliente</a>
+                                   <a href="/Soporte" className="user-dropdown-item">💬 Atención al cliente</a>
                                     <hr className="user-dropdown-divider" />
                                     <button
                                         className="user-dropdown-logout"

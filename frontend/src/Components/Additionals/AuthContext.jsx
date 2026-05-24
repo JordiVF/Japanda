@@ -1,11 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
 const AuthContext = createContext();
 
-const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutos en ms
+const INACTIVITY_LIMIT = 15 * 60 * 1000;
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(() => {
+
+    const [user, setUserState] = useState(() => {
         const stored = sessionStorage.getItem("usuario");
         return stored ? JSON.parse(stored) : null;
     });
@@ -13,45 +15,71 @@ export function AuthProvider({ children }) {
     const timerRef = useRef(null);
 
     const logout = useCallback(() => {
-        setUser(null);
+        setUserState(null);
         sessionStorage.removeItem("usuario");
         clearTimeout(timerRef.current);
     }, []);
 
+    const setUser = useCallback((newUser) => {
+        setUserState(newUser);
+
+        if (newUser) {
+            sessionStorage.setItem("usuario", JSON.stringify(newUser));
+        } else {
+            sessionStorage.removeItem("usuario");
+        }
+    }, []);
+
     const resetTimer = useCallback(() => {
         clearTimeout(timerRef.current);
+
         timerRef.current = setTimeout(() => {
-            logout();
+            setUserState(null);
+            sessionStorage.removeItem("usuario");
         }, INACTIVITY_LIMIT);
-    }, [logout]);
+    }, []);
 
     const login = (data) => {
         setUser(data);
-        sessionStorage.setItem("usuario", JSON.stringify(data));
-        resetTimer();
     };
 
-    // Escuchar eventos de actividad del usuario
     useEffect(() => {
         if (!user) return;
 
-        const eventos = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+        const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
 
-        eventos.forEach(ev => window.addEventListener(ev, resetTimer));
-        resetTimer(); // Arranca el timer al hacer login
+        events.forEach(ev => window.addEventListener(ev, resetTimer));
+
+        resetTimer();
 
         return () => {
-            eventos.forEach(ev => window.removeEventListener(ev, resetTimer));
+            events.forEach(ev => window.removeEventListener(ev, resetTimer));
             clearTimeout(timerRef.current);
         };
     }, [user, resetTimer]);
 
+    useEffect(() => {
+        const syncUser = (e) => {
+            if (e.key === "usuario") {
+                setUserState(e.newValue ? JSON.parse(e.newValue) : null);
+            }
+        };
+
+        window.addEventListener("storage", syncUser);
+
+        return () => window.removeEventListener("storage", syncUser);
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{
+            user,
+            setUser,
+            login,
+            logout
+        }}>
             {children}
         </AuthContext.Provider>
     );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
