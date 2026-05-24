@@ -5,6 +5,8 @@ import axios from "axios";
 import "../../../Styles/adminVista.css";
 
 const API = "http://localhost:3000/api/carrito";
+const API_USUARIOS = "http://localhost:3000/api/usuarios";
+
 const ESTADOS = ["activo", "inactivo", "abandonado", "convertido"];
 
 function AdminCarrito() {
@@ -12,9 +14,14 @@ function AdminCarrito() {
     const formRef = useRef(null);
 
     const [carritos, setCarritos] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
     const [busquedaId, setBusquedaId] = useState("");
     const [editId, setEditId] = useState(null);
-    const [form, setForm] = useState({ id_usuario: "", estado: "activo" });
+
+    const [form, setForm] = useState({
+        id_usuario: "",
+        estado: "activo"
+    });
 
     const fetchCarritos = async () => {
         try {
@@ -25,8 +32,18 @@ function AdminCarrito() {
         }
     };
 
+    const fetchUsuarios = async () => {
+        try {
+            const res = await axios.get(API_USUARIOS);
+            setUsuarios(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
         fetchCarritos();
+        fetchUsuarios();
     }, []);
 
     const handleSearch = () => {
@@ -40,12 +57,19 @@ function AdminCarrito() {
     };
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        });
     };
 
     const handleEdit = (c) => {
         setEditId(c.id_carrito);
-        setForm({ id_usuario: c.id_usuario, estado: c.estado });
+        setForm({
+            id_usuario: c.id_usuario,
+            estado: c.estado
+        });
+
         setTimeout(() =>
             formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
             50
@@ -57,9 +81,7 @@ function AdminCarrito() {
         if (!confirmado) return;
 
         try {
-            await axios.delete(`${API}/${id}`, {
-                data: { id_usuario: Number(form.id_usuario) }
-            });
+            await axios.delete(`${API}/${id}`);
             fetchCarritos();
         } catch (err) {
             alert(err.response?.data?.error || "Error al eliminar");
@@ -106,6 +128,7 @@ function AdminCarrito() {
     return (
         <div className="admin-vista">
             <div className="admin-vista-wrapper">
+
                 <div className="admin-header">
                     <button className="back-btn" onClick={() => navigate(-1)}>
                         ← Volver
@@ -114,6 +137,7 @@ function AdminCarrito() {
 
                 <h1 style={{ margin: "20px 0" }}>Carritos</h1>
 
+                {/* BUSCADOR */}
                 <div className="admin-section admin-buscador">
                     <input
                         className="admin-input"
@@ -136,12 +160,13 @@ function AdminCarrito() {
                     </button>
                 </div>
 
+                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
                             <tr>
                                 <th>ID Carrito</th>
-                                <th>ID Usuario</th>
+                                <th>Usuario</th>
                                 <th>Fecha creación</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -159,46 +184,39 @@ function AdminCarrito() {
                                 carritos.map((c) => (
                                     <tr
                                         key={c.id_carrito}
-                                        style={
-                                            editId === c.id_carrito
-                                                ? { backgroundColor: "#cfe3f5", transition: "background 0.3s" }
-                                                : {}
-                                        }
+                                        style={editId === c.id_carrito ? { backgroundColor: "#cfe3f5" } : {}}
                                     >
                                         <td>{c.id_carrito}</td>
-                                        <td>{c.id_usuario}</td>
+
+                                        {/* SELECT DISPLAY NAME */}
+                                        <td>
+                                            {usuarios.find(u => u.id_usuario === c.id_usuario)?.email ||
+                                                c.id_usuario}
+                                        </td>
+
                                         <td>
                                             {c.fecha_creacion
-                                                ? new Date(c.fecha_creacion).toLocaleDateString("es-ES", {
-                                                    day: "2-digit",
-                                                    month: "2-digit",
-                                                    year: "numeric",
-                                                })
+                                                ? new Date(c.fecha_creacion).toLocaleDateString("es-ES")
                                                 : "-"}
                                         </td>
+
                                         <td>
-                                            <span
-                                                style={{
-                                                    ...estadoColor(c.estado),
-                                                    padding: "3px 10px",
-                                                    borderRadius: "99px",
-                                                    fontSize: "0.8em",
-                                                    fontWeight: 700,
-                                                }}
-                                            >
+                                            <span style={{
+                                                ...estadoColor(c.estado),
+                                                padding: "3px 10px",
+                                                borderRadius: "99px",
+                                                fontSize: "0.8em",
+                                                fontWeight: 700,
+                                            }}>
                                                 {c.estado}
                                             </span>
                                         </td>
+
                                         <td>
                                             <div className="acciones">
                                                 <button
                                                     className="admin-btn admin-btn-edit"
                                                     onClick={() => handleEdit(c)}
-                                                    style={
-                                                        editId === c.id_carrito
-                                                            ? { opacity: 0.4, cursor: "not-allowed" }
-                                                            : {}
-                                                    }
                                                 >
                                                     Editar
                                                 </button>
@@ -218,20 +236,29 @@ function AdminCarrito() {
                     </table>
                 </div>
 
+                {/* FORM */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
                     <div className="admin-form">
+
                         <h3>{editId ? `Editar carrito #${editId}` : "Crear carrito"}</h3>
 
                         <div className="admin-form-grid">
-                            <input
+
+                            {/* SELECT USUARIO */}
+                            <select
                                 className="admin-input"
-                                type="number"
                                 name="id_usuario"
-                                placeholder="ID Usuario"
                                 value={form.id_usuario}
                                 onChange={handleChange}
                                 disabled={!!editId}
-                            />
+                            >
+                                <option value="">-- Selecciona usuario --</option>
+                                {usuarios.map(u => (
+                                    <option key={u.id_usuario} value={u.id_usuario}>
+                                        {u.email || u.id_usuario}
+                                    </option>
+                                ))}
+                            </select>
 
                             <select
                                 className="admin-input"
@@ -245,6 +272,7 @@ function AdminCarrito() {
                                     </option>
                                 ))}
                             </select>
+
                         </div>
 
                         <div className="admin-form-actions">
@@ -264,6 +292,7 @@ function AdminCarrito() {
                                 </button>
                             )}
                         </div>
+
                     </div>
                 </div>
 

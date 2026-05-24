@@ -3,10 +3,11 @@ import logo from "../../Images/head_logo.png";
 import banner1 from "../../Images/banner1.png";
 import banner2 from "../../Images/banner2.png";
 import banner3 from "../../Images/banner3.png";
-import { useCart } from "../Context/useCart";
+import { useCart } from "../Context/CartContext";
 import { useAuth } from "../Additionals/AuthContext";
 import Auth from "../Pages/Auth";
 import { useLocation } from "react-router-dom";
+
 
 function Nav({ onSearch }) {
 
@@ -206,7 +207,12 @@ function Nav({ onSearch }) {
                                     <hr className="user-dropdown-divider" />
                                     <button
                                         className="user-dropdown-logout"
-                                        onClick={(e) => { e.preventDefault(); logout(); window.location.reload() }}
+                                        onClick={(e) => {
+                                            e.preventDefault(); logout(); window.location.reload();
+                                            window.dispatchEvent(new Event("auth-change"));
+                                            window.dispatchEvent(new Event("storage"));
+                                            window.location.reload();
+                                        }}
                                     >
                                         🚪 Cerrar sesión
                                     </button>

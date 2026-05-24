@@ -49,8 +49,48 @@ function Auth({ onClose }) {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Error al iniciar sesión");
 
-            login(data.data);
+            const user = data.data;
+
+            const carritoRes = await fetch(
+                `${API}/api/carrito/usuario/${user.id_usuario}`
+            );
+
+            let carrito = await carritoRes.json();
+
+            if (!carrito?.id_carrito) {
+                const createRes = await fetch(`${API}/api/carrito`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id_usuario: user.id_usuario,
+                        estado: "activo"
+                    })
+                });
+
+                const created = await createRes.json();
+                carrito = created.data;
+
+            }
+
+            const userSession = {
+                ...user,
+                id_carrito: carrito.id_carrito
+            };
+
+            sessionStorage.setItem("usuario", JSON.stringify(userSession));
+
+            login(userSession);
+
+
+            window.dispatchEvent(new Event("auth-change"));
+            window.dispatchEvent(new Event("storage"));
+
+
+
             setSuccess(`¡Bienvenido de vuelta, ${data.data.nombre}!`);
+
+            window.dispatchEvent(new Event("storage"));
+            window.location.reload();
             setLoginForm({ email: "", password: "" });
 
             // Cierra el modal tras 1.5s, sin redirigir a ningún sitio
@@ -86,6 +126,11 @@ function Auth({ onClose }) {
             if (!res.ok) throw new Error(data.error || "Error al registrarse");
 
             setSuccess("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
+
+            setTimeout(() => {
+                window.dispatchEvent(new Event("storage"));
+                window.location.reload();
+            }, 1500)
             setRegisterForm({ nombre: "", email: "", password: "", telefono: "", direccion: "", ciudad: "", cp: "", pais: "" });
 
             setTimeout(() => {

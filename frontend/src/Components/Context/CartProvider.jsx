@@ -1,36 +1,91 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { CartContext } from "./CartContext";
+import axios from "axios";
 
 const API = "http://localhost:3000/api/carrito-detalle";
+const CART_KEY = "japanda_cart";
 
-function loadCart() {
+function getUser() {
     try {
-        return JSON.parse(localStorage.getItem("cart")) || [];
+        return JSON.parse(sessionStorage.getItem("usuario"));
     } catch {
-        return [];
+        return null;
     }
 }
 
-function saveCart(items) {
-    localStorage.setItem("cart", JSON.stringify(items));
-}
-
 export function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState(loadCart);
+    const [cartItems, setCartItems] = useState([]);
+    const [loadingCart, setLoadingCart] = useState(true);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
-    const getUser = () => {
-        const u = sessionStorage.getItem("usuario");
-        return u ? JSON.parse(u) : null;
+    const loadCartFromDB = async (id_usuario) => {
+        const res = await axios.get(
+            `http://localhost:3000/api/carrito/usuario/${id_usuario}`
+        );
+
+        const carrito = res.data;
+        if (!carrito?.id_carrito) return [];
+
+        const detalles = await axios.get(
+            `http://localhost:3000/api/carrito-detalle/${carrito.id_carrito}`
+        );
+
+        return detalles.data.map(item => ({
+            id_producto: item.id_producto,
+            nombre: item.nombre,
+            precio: item.precio_unitario,
+            quantity: item.cantidad
+        }));
+    };
+
+    const syncCart = async () => {
+        setLoadingCart(true);
+
+        const u = getUser();
+
+        if (u?.id_usuario) {
+            const dbCart = await loadCartFromDB(u.id_usuario);
+            setCartItems(dbCart);
+        } else {
+            const local = localStorage.getItem(CART_KEY);
+            setCartItems(local ? JSON.parse(local) : []);
+        }
+
+        setLoadingCart(false);
     };
 
     useEffect(() => {
-        saveCart(cartItems);
-    }, [cartItems]);
+        const local = localStorage.getItem(CART_KEY);
+        const u = getUser();
+
+        if (u?.id_usuario) {
+            syncCart();
+        } else {
+            setCartItems(local ? JSON.parse(local) : []);
+            setLoadingCart(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handler = () => {
+            syncCart();
+        };
+
+        window.addEventListener("auth-change", handler);
+        return () => window.removeEventListener("auth-change", handler);
+    }, []);
+
+    useEffect(() => {
+        const u = getUser();
+
+        if (!u?.id_usuario && !loadingCart) {
+            localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+        }
+    }, [cartItems, loadingCart]);
 
     const addToCart = async (product) => {
-        const user = getUser();
-        if (!user) return;
+        const u = getUser();
 
         setCartItems(prev => {
             const exists = prev.find(i => i.id_producto === product.id_producto);
@@ -46,78 +101,93 @@ export function CartProvider({ children }) {
             return [...prev, { ...product, quantity: 1 }];
         });
 
-        await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                id_carrito: user.id_carrito,   // IMPORTANTE
-                id_producto: product.id_producto,
-                cantidad: 1,
-                precio_unitario: Number(product.precio)
-            })
+        setIsCartOpen(true);
+
+        if (!u?.id_usuario) return;
+
+        const carritoRes = await axios.get(
+            `http://localhost:3000/api/carrito/usuario/${u.id_usuario}`
+        );
+
+        const carrito = carritoRes.data;
+        if (!carrito?.id_carrito) return;
+
+        await axios.post(API, {
+            id_carrito: carrito.id_carrito,
+            id_producto: product.id_producto,
+            cantidad: 1,
+            precio_unitario: Number(product.precio)
         });
     };
 
     const updateQuantity = async (id_producto, delta) => {
-        const user = getUser();
-        if (!user) return;
+        const u = getUser();
 
-        setCartItems(prev => {
-            const updated = prev
+        setCartItems(prev =>
+            prev
                 .map(i =>
                     i.id_producto === id_producto
                         ? { ...i, quantity: i.quantity + delta }
                         : i
                 )
-                .filter(i => i.quantity > 0);
+                .filter(i => i.quantity > 0)
+        );
 
-            const item = updated.find(i => i.id_producto === id_producto);
+        if (!u?.id_usuario) return;
 
-            if (item) {
-                fetch(`${API}/${user.id_carrito}/${id_producto}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        cantidad: item.quantity
-                    })
-                });
-            } else {
-                fetch(`${API}/${user.id_carrito}/${id_producto}`, {
-                    method: "DELETE"
-                });
-            }
+        const carritoRes = await axios.get(
+            `http://localhost:3000/api/carrito/usuario/${u.id_usuario}`
+        );
 
-            return updated;
+        const carrito = carritoRes.data;
+        if (!carrito?.id_carrito) return;
+
+        await axios.put(`${API}/${carrito.id_carrito}/${id_producto}`, {
+            cantidad: delta
         });
     };
 
     const removeFromCart = async (id_producto) => {
-        const user = getUser();
-        if (!user) return;
+        const u = getUser();
 
-        setCartItems(prev =>
-            prev.filter(i => i.id_producto !== id_producto)
+        setCartItems(prev => prev.filter(i => i.id_producto !== id_producto));
+
+        if (!u?.id_usuario) return;
+
+        const carritoRes = await axios.get(
+            `http://localhost:3000/api/carrito/usuario/${u.id_usuario}`
         );
 
-        await fetch(`${API}/${user.id_carrito}/${id_producto}`, {
-            method: "DELETE"
-        });
+        const carrito = carritoRes.data;
+        if (!carrito?.id_carrito) return;
+
+        await axios.delete(`${API}/${carrito.id_carrito}/${id_producto}`);
     };
 
-    const clearCart = () => {
+    const clearCart = async () => {
+        const u = getUser();
+
         setCartItems([]);
+
+        if (!u?.id_usuario) return;
+
+        const carritoRes = await axios.get(
+            `http://localhost:3000/api/carrito/usuario/${u.id_usuario}`
+        );
+
+        const carrito = carritoRes.data;
+        if (!carrito?.id_carrito) return;
+
+        await axios.delete(`${API}/${carrito.id_carrito}`);
     };
 
     const totalItems = cartItems.reduce((a, b) => a + b.quantity, 0);
-
-    const totalPrice = cartItems.reduce(
-        (a, b) => a + b.precio * b.quantity,
-        0
-    );
+    const totalPrice = cartItems.reduce((a, b) => a + b.precio * b.quantity, 0);
 
     return (
         <CartContext.Provider value={{
             cartItems,
+            loadingCart,
             isCartOpen,
             setIsCartOpen,
             addToCart,

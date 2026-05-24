@@ -7,7 +7,7 @@ import Decoracion from "./Components/Pages/Decoracion";
 import Merchandising from "./Components/Pages/Merchandising";
 import Moda from "./Components/Pages/Moda";
 import Inciensos from "./Components/Pages/Inciensos";
-import { CartProvider } from "./Components/Context/CartContext.jsx";
+import { CartProvider } from "./Components/Context/CartProvider.jsx";
 import CartDrawer from "./Components/Cart/CartDrawer";
 import Auth from "./Components/Pages/Auth.jsx";
 import Admin from "./Components/Pages/Admin";
