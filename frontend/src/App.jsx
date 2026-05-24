@@ -19,6 +19,8 @@ import AdminSubcategorias from "./Components/Pages/admin/AdminSubcategorias";
 import AdminPedidos from "./Components/Pages/admin/adminPedidos.jsx";
 import AdminDetallesPedidos from "./Components/Pages/admin/adminDetallePedidos.jsx";
 import AdminCarrito from "./Components/Pages/admin/AdminCarrito";
+import AdminDetalleCarritos from "./Components/Pages/admin/adminDetalleCarritos.jsx";
+import AdminEnvios from "./Components/Pages/admin/AdminEnvios";
 
 
 import { useState } from "react";
@@ -51,6 +53,8 @@ function App() {
             <Route path="/admin/pedidos" element={<AdminPedidos />} />
             <Route path="/admin/detalle-pedidos" element={<AdminDetallesPedidos />} />
             <Route path="/admin/carrito" element={<AdminCarrito />} />
+            <Route path="/admin/detalle-carritos" element={<AdminDetalleCarritos />} />
+            <Route path="/admin/envios" element={<AdminEnvios />} />
 
 
           </Routes>

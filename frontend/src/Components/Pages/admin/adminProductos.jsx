@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,8 +24,12 @@ function AdminProductos() {
     });
 
     const [editId, setEditId] = useState(null);
+    const [categorias, setCategorias] = useState([]);
+    const [subcategorias, setSubcategorias] = useState([]);
 
     const API = "http://localhost:3000/api/productos";
+    const API_CATEGORIAS = "http://localhost:3000/api/categorias";
+    const API_SUBCATEGORIAS = "http://localhost:3000/api/subcategorias";
 
     // GET ALL
     const fetchProductos = async () => {
@@ -36,9 +41,32 @@ function AdminProductos() {
         }
     };
 
+    const fetchCategorias = async () => {
+        try {
+            const res = await axios.get(API_CATEGORIAS);
+            setCategorias(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchSubcategoriasByCategoria = async (id_categoria) => {
+        if (!id_categoria) {
+            setSubcategorias([]);
+            return;
+        }
+        try {
+            const res = await axios.get(`${API_SUBCATEGORIAS}/categoria/${id_categoria}`);
+            setSubcategorias(res.data);
+        } catch (err) {
+            console.error(err);
+            setSubcategorias([]);
+        }
+    };
+
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchProductos();
+        fetchCategorias();
     }, []);
 
     // DELETE
@@ -78,10 +106,18 @@ function AdminProductos() {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
+        const newValue = type === "checkbox" ? checked : value;
+
         setForm({
             ...form,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: newValue,
+            // Al cambiar categoría, reseteamos la subcategoría
+            ...(name === "id_categoria" ? { id_subcategoria: "" } : {}),
         });
+
+        if (name === "id_categoria") {
+            fetchSubcategoriasByCategoria(value);
+        }
     };
 
     // CREATE / UPDATE
@@ -157,6 +193,13 @@ function AdminProductos() {
             id_subcategoria: producto.id_subcategoria || "",
             nuevo_booleano: producto.nuevo_booleano || false,
         });
+
+        // Cargar subcategorías de la categoría del producto
+        if (producto.id_categoria) {
+            fetchSubcategoriasByCategoria(producto.id_categoria);
+        } else {
+            setSubcategorias([]);
+        }
 
         setTimeout(() => {
             formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -367,14 +410,19 @@ function AdminProductos() {
 
                             </div>
 
-                            <input
+                            <select
                                 className="admin-input-cat"
-                                type="number"
                                 name="id_categoria"
-                                placeholder="ID Categoría"
                                 value={form.id_categoria}
                                 onChange={handleChange}
-                            />
+                            >
+                                <option value="">-- Selecciona una categoría --</option>
+                                {categorias.map((cat) => (
+                                    <option key={cat.id_categoria} value={cat.id_categoria}>
+                                        {cat.nombre}
+                                    </option>
+                                ))}
+                            </select>
                             <input
                                 className="admin-input"
                                 name="imagen_url"
@@ -384,14 +432,26 @@ function AdminProductos() {
 
                             />
 
-                            <input
+                            <select
                                 className="admin-input"
-                                type="number"
                                 name="id_subcategoria"
-                                placeholder="ID Subcategoría"
                                 value={form.id_subcategoria}
                                 onChange={handleChange}
-                            />
+                                disabled={!form.id_categoria}
+                            >
+                                <option value="">
+                                    {form.id_categoria
+                                        ? subcategorias.length > 0
+                                            ? "-- Selecciona una subcategoría --"
+                                            : "Sin subcategorías disponibles"
+                                        : "-- Primero selecciona una categoría --"}
+                                </option>
+                                {subcategorias.map((sub) => (
+                                    <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
+                                        {sub.nombre}
+                                    </option>
+                                ))}
+                            </select>
 
                             <label>
                                 Activo
@@ -429,7 +489,7 @@ function AdminProductos() {
                                     className="admin-btn admin-btn-secondary"
                                     onClick={() => {
                                         setEditId(null);
-
+                                        setSubcategorias([]);
                                         setForm({
                                             nombre: "",
                                             descripcion: "",
