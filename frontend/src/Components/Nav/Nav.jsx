@@ -15,26 +15,22 @@ import icon4 from "../../icons/4.png";
 import icon5 from "../../icons/5.png";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-function Nav() {
+function Nav({ onSearch }) {
 
     const { setIsCartOpen, totalItems } = useCart();
     const { user, logout } = useAuth();
-
     const [currentBanner, setCurrentBanner] = useState(0);
     const [showAuth, setShowAuth] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
-
     const banners = [banner1, banner2, banner3];
-
     const location = useLocation();
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-
-    const search = searchParams.get("search") || "";
-
     const hideBanner = location.pathname.startsWith("/admin");
     const isAlimentacion = location.pathname === "/Alimentacion";
+
+    const [searchParams] = useSearchParams();
 
     const seccionEnUrl = isAlimentacion
         ? searchParams.get("seccion")
@@ -50,7 +46,6 @@ function Nav() {
     const profileIcons = [icon1, icon2, icon3, icon4, icon5];
 
     useEffect(() => {
-
         if (!user) {
             setProfileImage(null);
             return;
@@ -70,32 +65,28 @@ function Nav() {
     }, [user]);
 
     const imagenPerfil = (
-        <img src={profileImage} alt="Perfil" className='imagenUsuario' />
+        <img
+            src={profileImage}
+            alt="Perfil"
+            className='imagenUsuario'
+        />
     );
 
-    const goHome = () => {
-        window.location.href = "/";
-    };
+    const goHome = () => { window.location.href = '/'; };
 
-    const handleSearch = (value) => {
-        if (value.trim() === "") {
-            navigate(location.pathname);
-        } else {
-            navigate(`?search=${encodeURIComponent(value)}`);
-        }
+    const handleSeccionNav = (e, seccion) => {
+        e.preventDefault();
+        navigate(`/Alimentacion?seccion=${seccion}`);
     };
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % banners.length);
         }, 7000);
-
         return () => clearInterval(interval);
     }, [banners.length]);
 
-    const handleBannerChange = (index) => {
-        setCurrentBanner(index);
-    };
+    const handleBannerChange = (index) => { setCurrentBanner(index); };
 
     return (
         <>
@@ -118,13 +109,15 @@ function Nav() {
                             strokeLinejoin="round"
                         />
                     </svg>
-
                     <input
                         type="text"
                         className="input-buscador"
                         placeholder="Buscar producto..."
-                        value={search}
-                        onChange={(e) => handleSearch(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            onSearch(e.target.value.trim());
+                        }}
                     />
                 </div>
 
@@ -157,6 +150,7 @@ function Nav() {
                                     key={seccion}
                                     href={`/Alimentacion?seccion=${seccion}`}
                                     className={`dropdown-item ${seccionEnUrl === seccion ? "dropdown-item--active" : ""}`}
+                                    onClick={(e) => handleSeccionNav(e, seccion)}
                                 >
                                     {seccion}
                                 </a>
@@ -221,21 +215,40 @@ function Nav() {
                                 {user ? imagenPerfil : svgUsuario}
                             </a>
 
-                            {user && showDropdown && (
-                                <div className="user-dropdown open">
-                                    <a href="/perfil">Mis datos</a>
-                                    <a href="/pedidos">Mis pedidos</a>
-                                    <a href="/Soporte">Soporte</a>
+                            {user && (
+                                <div className={`user-dropdown ${showDropdown ? "open" : ""}`}>
+                                    
+                                    <div className="user-dropdown-header">
+                                        <span className="user-dropdown-name">{user.nombre}</span>
+                                        <span className="user-dropdown-email">{user.email}</span>
+                                    </div>
+
+                                    <hr className="user-dropdown-divider" />
+
+                                    <a href="/perfil" className="user-dropdown-item">👤 Mis datos</a>
+                                    <a href="/pedidos" className="user-dropdown-item">📦 Mis pedidos</a>
+                                    <a href="/Soporte" className="user-dropdown-item">💬 Atención al cliente</a>
+
+                                    <hr className="user-dropdown-divider" />
 
                                     <button
-                                        onClick={() => {
+                                        className="user-dropdown-logout"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+
                                             sessionStorage.removeItem(`userProfileImage_${user.id}`);
+
                                             logout();
+
+                                            window.dispatchEvent(new Event("auth-change"));
+                                            window.dispatchEvent(new Event("storage"));
+
                                             window.location.reload();
                                         }}
                                     >
-                                        Cerrar sesión
+                                        🚪 Cerrar sesión
                                     </button>
+
                                 </div>
                             )}
 
