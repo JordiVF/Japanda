@@ -78,8 +78,21 @@ const createUsuario = async (req, res) => {
       .select('id_usuario, nombre, email, rol, telefono, direccion, ciudad, cp, pais');
 
     if (error) throw error;
-    
-    res.status(201).json({ message: 'Usuario creado exitosamente', data: data[0] });
+
+    const nuevoUsuario = data[0];
+
+    const { error: carritoError } = await supabase
+      .from('carritos')
+      .insert([{
+        id_usuario: nuevoUsuario.id_usuario,
+        estado: 'activo'
+      }]);
+
+    if (carritoError) {
+      console.error('Error al crear carrito para el usuario:', carritoError.message);
+    }
+
+    res.status(201).json({ message: 'Usuario creado exitosamente', data: nuevoUsuario });
   } catch (error) {
     res.status(500).json({ error: 'Error al crear usuario', details: error.message });
   }
