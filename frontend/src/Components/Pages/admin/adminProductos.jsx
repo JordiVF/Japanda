@@ -10,6 +10,7 @@ function AdminProductos() {
     const formRef = useRef(null);
     const [visibleCount, setVisibleCount] = useState(10);
     const [busquedaId, setBusquedaId] = useState("");
+    
 
     const [form, setForm] = useState({
         nombre: "",

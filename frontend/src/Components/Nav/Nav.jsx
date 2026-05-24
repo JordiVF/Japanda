@@ -88,6 +88,7 @@ function Nav() {
         return () => clearInterval(interval);
     }, [banners.length]);
 
+    // eslint-disable-next-line no-unused-vars
     const handleBannerChange = (index) => { setCurrentBanner(index); };
 
     return (
