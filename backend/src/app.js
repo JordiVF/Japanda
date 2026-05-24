@@ -11,6 +11,7 @@ const detallesPedidosRoutes = require('./routes/detallesPedidosRoutes');
 const enviosRoutes = require('./routes/enviosRoutes');
 const carritoRoutes = require('./routes/carritoRoutes');
 const pagosRoutes = require('./routes/pagosRoutes');
+const carritoDetalleRoutes = require('./routes/carritoDetalleRoutes');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/detallespedidos', detallesPedidosRoutes);
 app.use('/api/envios', enviosRoutes);
 app.use('/api/carrito', carritoRoutes);
 app.use('/api/pagos', pagosRoutes);
+app.use('/api/carrito-detalle', carritoDetalleRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

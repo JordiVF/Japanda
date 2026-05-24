@@ -19,7 +19,6 @@ const verificarUsuarioPorEmail = async (req, res, next) => {
     }
 
     req.usuarioAutenticado = usuario;
-    
     next();
   } catch (error) {
     res.status(500).json({ error: 'Error al verificar usuario', details: error.message });
@@ -59,42 +58,63 @@ const verificarPropietario = async (req, res, next) => {
     const esPropietario = usuarioActual.email === usuarioObjetivo.email;
 
     if (!esAdmin && !esPropietario) {
-      return res.status(403).json({
-        error: 'No tienes permiso para realizar esta acción'
-      });
+      return res.status(403).json({ error: 'No tienes permiso para realizar esta acción' });
     }
 
-    req.user = usuarioActual; // opcional pero recomendado
+    req.user = usuarioActual;
     next();
-
   } catch (error) {
-    res.status(403).json({
-      error: 'Error al verificar permisos',
-      details: error.message
-    });
+    res.status(403).json({ error: 'Error al verificar permisos', details: error.message });
   }
 };
 
 const verificarCarritoPropietario = async (req, res, next) => {
   try {
     const emailDelUsuario = req.body.email || req.headers['x-user-email'];
-    const idDelCarritoEnURL = parseInt(req.params.id_usuario);
+    const idEnURL = parseInt(req.params.id_usuario || req.params.id_carrito);
 
     if (!emailDelUsuario) {
       return res.status(400).json({ error: 'Email requerido en body o header (x-user-email)' });
     }
 
-    const { data: usuario } = require('../config/supabaseClient')
+    const { data: usuario, error } = await supabase
       .from('usuarios')
-      .select('id_usuario')
+      .select('id_usuario, rol')
       .eq('email', emailDelUsuario)
       .single();
 
-    if (!usuario || usuario.id_usuario !== idDelCarritoEnURL) {
-      return res.status(403).json({ error: 'No tienes permiso para acceder a este carrito' });
+    if (error || !usuario) {
+      return res.status(403).json({ error: 'Usuario no encontrado o no autorizado' });
     }
 
-    next();
+    if (usuario.rol === 'admin') {
+      req.user = usuario;
+      return next();
+    }
+
+    if (req.params.id_usuario !== undefined) {
+      if (usuario.id_usuario !== idEnURL) {
+        return res.status(403).json({ error: 'No tienes permiso para acceder a este carrito' });
+      }
+      req.user = usuario;
+      return next();
+    }
+
+    if (req.params.id_carrito !== undefined) {
+      const { data: carrito } = await supabase
+        .from('carritos')
+        .select('id_usuario')
+        .eq('id_carrito', idEnURL)
+        .single();
+
+      if (!carrito || carrito.id_usuario !== usuario.id_usuario) {
+        return res.status(403).json({ error: 'No tienes permiso para acceder a este carrito' });
+      }
+      req.user = usuario;
+      return next();
+    }
+
+    return res.status(403).json({ error: 'No tienes permiso para acceder a este recurso' });
   } catch (error) {
     res.status(403).json({ error: 'Error al verificar acceso', details: error.message });
   }
