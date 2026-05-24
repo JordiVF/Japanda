@@ -93,8 +93,8 @@ function AdminPedidos() {
             await axios.post(API, {
                 id_usuario: Number(createForm.id_usuario),
                 fecha: createForm.fecha
-                    ? new Date(createForm.fecha).toISOString()
-                    : new Date().toISOString(),
+                    ? new Date(createForm.fecha).toLocaleString("sv-SE", { timeZone: "Europe/Madrid" }).replace(" ", "T") + ":00+02:00"
+                    : new Date().toLocaleString("sv-SE", { timeZone: "Europe/Madrid" }).replace(" ", "T") + ":00+02:00",
                 estado: createForm.estado,
                 total: Number(createForm.total),
             });
@@ -205,7 +205,7 @@ function AdminPedidos() {
                                 <tr key={p.id_pedido}>
                                     <td>{p.id_pedido}</td>
                                     <td>{p.id_usuario}</td>
-                                    <td>{new Date(p.fecha).toLocaleString()}</td>
+                                    <td>{new Date(p.fecha).toLocaleString("es-ES", { timeZone: "Europe/Madrid" })}</td>
 
                                     <td>
                                         <span style={{ ...estadoColor(p.estado), padding: "3px 10px", borderRadius: "99px" }}>

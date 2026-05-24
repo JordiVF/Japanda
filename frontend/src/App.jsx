@@ -23,6 +23,7 @@ import AdminDetalleCarritos from "./Components/Pages/admin/adminDetalleCarritos.
 import AdminEnvios from "./Components/Pages/admin/AdminEnvios";
 import Perfil from "./Components/Pages/Perfil.jsx";
 import Contacto from "./Components/Pages/AtencionCliente";
+import MisPedidos from "./Components/Pages/MisPedidos.jsx";
 
 import AdminRoute from "./Components/Guards/AdminRoute";
 
@@ -42,15 +43,15 @@ function App() {
           <Routes>
 
             <Route path="/" element={<Shop searchQuery={searchQuery} />} />
-            <Route path="/Alimentacion" element={<Alimentacion />} />
-            <Route path="/Decoracion" element={<Decoracion />} />
-            <Route path="/Merchandising" element={<Merchandising />} />
-            <Route path="/Moda" element={<Moda />} />
-            <Route path="/Inciensos" element={<Inciensos />} />
+            <Route path="/Alimentacion" element={<Alimentacion searchQuery={searchQuery} />} />
+            <Route path="/Decoracion" element={<Decoracion searchQuery={searchQuery} />} />
+            <Route path="/Merchandising" element={<Merchandising searchQuery={searchQuery} />} />
+            <Route path="/Moda" element={<Moda searchQuery={searchQuery} />} />
+            <Route path="/Inciensos" element={<Inciensos searchQuery={searchQuery} />} />
             <Route path="/Auth" element={<Auth />} />
             <Route path="/Perfil" element={<Perfil />} />
             <Route path="/Soporte" element={<Contacto />} />
-
+            <Route path="/pedidos" element={<MisPedidos />} />
             <Route
               path="/admin"
               element={

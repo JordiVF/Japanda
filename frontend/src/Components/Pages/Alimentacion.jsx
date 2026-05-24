@@ -18,7 +18,6 @@ function Alimentacion() {
     const [subcategoriaIds, setSubcategoriaIds]   = useState(null);
     const [seccionActiva,   setSeccionActiva]      = useState(null);
 
-    // Si viene ?seccion=Snack desde el nav, activar automáticamente
     useEffect(() => {
         const seccion = searchParams.get("seccion");
         if (seccion && SECCIONES_MAP[seccion]) {

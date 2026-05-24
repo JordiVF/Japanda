@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useState, useEffect } from 'react';
 import logo from "../../Images/head_logo.png";
 import banner1 from "../../Images/banner1.png";
@@ -6,6 +8,11 @@ import banner3 from "../../Images/banner3.png";
 import { useCart } from "../Context/CartContext";
 import { useAuth } from "../Additionals/AuthContext";
 import Auth from "../Pages/Auth";
+import icon1 from "../../icons/1.png";
+import icon2 from "../../icons/2.png";
+import icon3 from "../../icons/3.png";
+import icon4 from "../../icons/4.png";
+import icon5 from "../../icons/5.png";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 function Nav({ onSearch }) {
@@ -16,11 +23,13 @@ function Nav({ onSearch }) {
     const [showAuth, setShowAuth] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
     const banners = [banner1, banner2, banner3];
     const location = useLocation();
     const navigate = useNavigate();
     const hideBanner = location.pathname.startsWith("/admin");
     const isAlimentacion = location.pathname === "/Alimentacion";
+
 
     const [searchParams] = useSearchParams();
 
@@ -33,10 +42,40 @@ function Nav({ onSearch }) {
             <path fillRule="evenodd" clipRule="evenodd" d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z" fill="#e34f1d" />
         </svg>
     );
+    const profileIcons = [icon1, icon2, icon3, icon4, icon5];
+
+    useEffect(() => {
+
+        if (!user) {
+            setProfileImage(null);
+            return;
+        }
+
+        const storageKey = `userProfileImage_${user.id}`;
+
+        let savedImage = sessionStorage.getItem(storageKey);
+
+        if (!savedImage) {
+
+            const randomIndex = crypto.getRandomValues(new Uint32Array(1))[0] % profileIcons.length;
+
+            savedImage = profileIcons[randomIndex];
+
+            sessionStorage.setItem(storageKey, savedImage);
+        }
+
+        setProfileImage(savedImage);
+
+    }, [user]);
 
     const imagenPerfil = (
-        <img src='https://fastly.picsum.photos/id/922/200/200.jpg?hmac=2ePRMbZ5V-IoV8hGz1XNSAUmQLPTOtYIAxgBHVWD3cU' alt="" className='imagenUsuario' />
+        <img
+            src={profileImage}
+            alt="Perfil"
+            className='imagenUsuario'
+        />
     );
+
 
     const goHome = () => { window.location.href = '/'; };
 
@@ -115,8 +154,8 @@ function Nav({ onSearch }) {
                                     key={seccion}
                                     href={`/Alimentacion?seccion=${seccion}`}
                                     className={`dropdown-item ${seccionEnUrl === seccion
-                                            ? "dropdown-item--active"
-                                            : ""
+                                        ? "dropdown-item--active"
+                                        : ""
                                         }`}
                                     onClick={(e) => handleSeccionNav(e, seccion)}
                                 >
@@ -168,7 +207,6 @@ function Nav({ onSearch }) {
                             </a>
                         </div>
 
-                        {/* LOGIN / USUARIO */}
                         <div className="side-container">
                             <a
                                 href="#"
@@ -204,12 +242,13 @@ function Nav({ onSearch }) {
                                     <hr className="user-dropdown-divider" />
                                     <a href="/perfil" className="user-dropdown-item">👤 Mis datos</a>
                                     <a href="/pedidos" className="user-dropdown-item">📦 Mis pedidos</a>
-                                   <a href="/Soporte" className="user-dropdown-item">💬 Atención al cliente</a>
+                                    <a href="/Soporte" className="user-dropdown-item">💬 Atención al cliente</a>
                                     <hr className="user-dropdown-divider" />
                                     <button
                                         className="user-dropdown-logout"
                                         onClick={(e) => {
                                             e.preventDefault();
+                                            sessionStorage.removeItem(`userProfileImage_${user.id}`);
                                             logout();
                                             window.dispatchEvent(new Event("auth-change"));
                                             window.dispatchEvent(new Event("storage"));

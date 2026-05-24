@@ -21,6 +21,8 @@ export default function Perfil() {
     newPassword: ""
   });
 
+  const [pedidos, setPedidos] = useState([]);
+
   const [sent, setSent] = useState(false);
   const [passwordSent, setPasswordSent] = useState(false);
 
@@ -36,6 +38,28 @@ export default function Perfil() {
         pais: user.pais || ""
       });
     }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchPedidos = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/pedidos/usuario/${user.id_usuario}`
+        );
+
+        const data = await res.json();
+
+        console.log("PEDIDOS:", data);
+
+        setPedidos(data);
+      } catch (err) {
+        console.error("Error cargando pedidos:", err);
+      }
+    };
+
+    fetchPedidos();
   }, [user]);
 
   const handleChange = (e) => {
@@ -156,11 +180,9 @@ export default function Perfil() {
       </form>
 
       <div className="perfil-password">
-
         <h2>Cambiar contraseña</h2>
 
         <form onSubmit={handlePasswordSubmit}>
-
           <input
             type="password"
             name="currentPassword"
@@ -178,8 +200,26 @@ export default function Perfil() {
           />
 
           <button type="submit">Actualizar contraseña</button>
-
         </form>
+      </div>
+
+      <div className="perfil-pedidos">
+        <h2>Mis pedidos</h2>
+
+        {pedidos.length === 0 ? (
+          <p>No tienes pedidos aún</p>
+        ) : (
+          <div className="pedidos-list">
+            {pedidos.map((pedido) => (
+              <div key={pedido.id_pedido} className="pedido-card">
+                <p><strong>ID:</strong> {pedido.id_pedido}</p>
+                <p><strong>Fecha:</strong> {new Date(pedido.fecha).toLocaleString()}</p>
+                <p><strong>Estado:</strong> {pedido.estado}</p>
+                <p><strong>Total:</strong> {pedido.total} €</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {sent && (

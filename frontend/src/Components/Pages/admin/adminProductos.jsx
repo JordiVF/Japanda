@@ -30,8 +30,6 @@ function AdminProductos() {
     const API = "http://localhost:3000/api/productos";
     const API_CATEGORIAS = "http://localhost:3000/api/categorias";
     const API_SUBCATEGORIAS = "http://localhost:3000/api/subcategorias";
-
-    // GET ALL
     const fetchProductos = async () => {
         try {
             const res = await axios.get(API);
@@ -69,7 +67,6 @@ function AdminProductos() {
         fetchCategorias();
     }, []);
 
-    // DELETE
     const handleDelete = async (id) => {
     const confirmado = window.confirm(`¿Seguro que quieres eliminar el producto #${id}? Esta acción no se puede deshacer.`);
     if (!confirmado) return;
@@ -90,7 +87,6 @@ function AdminProductos() {
         alert(err.response?.data?.error || "Error al eliminar el producto");
     }
 };
-    // SEARCH
     const handleSearch = async () => {
         if (!busquedaId) return fetchProductos();
 
@@ -102,7 +98,6 @@ function AdminProductos() {
         }
     };
 
-    // INPUTS
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -111,7 +106,6 @@ function AdminProductos() {
         setForm({
             ...form,
             [name]: newValue,
-            // Al cambiar categoría, reseteamos la subcategoría
             ...(name === "id_categoria" ? { id_subcategoria: "" } : {}),
         });
 
@@ -119,8 +113,6 @@ function AdminProductos() {
             fetchSubcategoriasByCategoria(value);
         }
     };
-
-    // CREATE / UPDATE
     const handleSubmit = async () => {
         try {
             if (!form.nombre || !form.precio) {
@@ -155,7 +147,6 @@ function AdminProductos() {
                 console.log("Producto creado");
             }
 
-            // RESET
             setForm({
                 nombre: "",
                 descripcion: "",
@@ -244,8 +235,6 @@ function AdminProductos() {
                         Reset
                     </button>
                 </div>
-
-                {/* TABLA */}
                 <div className="admin-table-wrapper">
                     <table className="admin-table">
                         <thead>
@@ -270,10 +259,8 @@ function AdminProductos() {
                                 }>
 
 
-                                    {/* ID */}
                                     <td>{p.id_producto}</td>
 
-                                    {/* IMAGEN */}
                                     <td>
                                         {p.imagen_url ? (
                                             <img
@@ -298,7 +285,6 @@ function AdminProductos() {
                                         )}
                                     </td>
 
-                                    {/* NOMBRE */}
                                     <td>{p.nombre}</td>
 
                                     <td>{p.precio}€</td>
@@ -344,7 +330,6 @@ function AdminProductos() {
                     )}
                 </div>
 
-                {/* FORM */}
                 <div className="admin-section" style={{ marginTop: "1.5rem" }} ref={formRef}>
                     <div className="admin-form">
 
