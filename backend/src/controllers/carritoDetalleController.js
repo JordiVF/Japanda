@@ -16,13 +16,30 @@ const getDetallesByCarrito = async (req, res) => {
 
     const { data, error } = await supabase
       .from('detalle_carrito')
-      .select('id_carrito, id_producto, cantidad, precio_unitario, fecha_agregado')
+      .select(`
+        id_carrito,
+        id_producto,
+        cantidad,
+        precio_unitario,
+        fecha_agregado,
+        productos(nombre, imagen_url)
+      `)
       .eq('id_carrito', id_carrito)
       .order('fecha_agregado', { ascending: false });
 
     if (error) throw error;
 
-    res.status(200).json(data || []);
+    const result = (data || []).map(item => ({
+      id_carrito: item.id_carrito,
+      id_producto: item.id_producto,
+      cantidad: item.cantidad,
+      precio_unitario: item.precio_unitario,
+      fecha_agregado: item.fecha_agregado,
+      nombre: item.productos?.nombre ?? null,
+      imagen_url: item.productos?.imagen_url ?? null,
+    }));
+
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener detalles del carrito', details: error.message });
   }
