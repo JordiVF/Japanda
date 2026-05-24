@@ -280,10 +280,25 @@ const vaciarCarrito = async (req, res) => {
   }
 };
 
+const getTodosLosCarritos = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('carritos')
+      .select('id_carrito, id_usuario, fecha_creacion, estado')
+      .order('id_carrito', { ascending: false });
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener carritos', details: error.message });
+  }
+};
+
 module.exports = {
   getCarritoUsuario,
   getCarritoConProductos,
   getTotalCarrito,
   agregarAlCarrito,
-  vaciarCarrito
+  vaciarCarrito,
+  getTodosLosCarritos
 };
