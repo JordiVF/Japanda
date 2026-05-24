@@ -8,6 +8,7 @@ router.get('/:id_usuario', verificarCarritoPropietario, carritoController.getCar
 router.get('/:id_usuario/productos', verificarCarritoPropietario, carritoController.getCarritoConProductos);
 router.get('/:id_usuario/total', verificarCarritoPropietario, carritoController.getTotalCarrito);
 router.post('/', verificarUsuarioPorEmail, carritoController.agregarAlCarrito);
+router.put('/:id', carritoController.updateCarrito);
 router.delete('/:id_usuario', verificarCarritoPropietario, carritoController.vaciarCarrito);
 
 module.exports = router;

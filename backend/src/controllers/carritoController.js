@@ -294,11 +294,42 @@ const getTodosLosCarritos = async (req, res) => {
   }
 };
 
+const updateCarrito = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_usuario, estado } = req.body;
+
+    if (!id_usuario && !estado) {
+      return res.status(400).json({ error: 'Al menos id_usuario o estado son requeridos' });
+    }
+
+    const updateData = {};
+    if (id_usuario) updateData.id_usuario = id_usuario;
+    if (estado) updateData.estado = estado;
+
+    const { data, error } = await supabase
+      .from('carritos')
+      .update(updateData)
+      .eq('id_carrito', id)
+      .select('id_carrito, id_usuario, fecha_creacion, estado');
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Carrito no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Carrito actualizado', data: data[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar carrito', details: error.message });
+  }
+};
+
 module.exports = {
   getCarritoUsuario,
   getCarritoConProductos,
   getTotalCarrito,
   agregarAlCarrito,
   vaciarCarrito,
-  getTodosLosCarritos
+  getTodosLosCarritos,
+  updateCarrito
 };
