@@ -232,21 +232,47 @@ const deleteUsuario = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const { error: deleteCarritosError } = await supabase
+      .from('carritos')
+      .delete()
+      .eq('id_usuario', id);
+
+    if (deleteCarritosError) {
+      return res.status(500).json({
+        error: 'Error eliminando carritos',
+        details: deleteCarritosError.message
+      });
+    }
+
     const { data, error } = await supabase
       .from('usuarios')
       .delete()
       .eq('id_usuario', id)
       .select('id_usuario, nombre, email');
 
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (error) {
+      return res.status(500).json({
+        error: 'Error eliminando usuario',
+        details: error.message
+      });
     }
 
-    res.status(200).json({ message: 'Usuario eliminado exitosamente', data: data[0] });
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        error: 'Usuario no encontrado'
+      });
+    }
+
+    res.status(200).json({
+      message: 'Usuario eliminado exitosamente',
+      data: data[0]
+    });
+
   } catch (error) {
-    res.status(500).json({ error: 'Error al eliminar usuario', details: error.message });
+    res.status(500).json({
+      error: 'Error interno del servidor',
+      details: error.message
+    });
   }
 };
 
