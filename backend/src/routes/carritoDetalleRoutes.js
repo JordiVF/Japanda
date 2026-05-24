@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const carritoDetalleController = require('../controllers/carritoDetalleController');
 
+router.get('/', carritoDetalleController.getAllDetalles);
 router.get('/:id_carrito', carritoDetalleController.getDetallesByCarrito);
 router.get('/:id_carrito/productos', carritoDetalleController.getDetallesConProductos);
 router.get('/:id_carrito/:id_producto', carritoDetalleController.getDetalleItem);

@@ -328,10 +328,46 @@ const deleteAllDetalles = async (req, res) => {
   }
 };
 
+const getAllDetalles = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('detalle_carrito')
+      .select(`
+        id_carrito,
+        id_producto,
+        cantidad,
+        precio_unitario,
+        fecha_agregado,
+        productos(nombre, imagen_url),
+        carritos(id_usuario, usuarios(nombre, email))
+      `)
+      .order('id_carrito', { ascending: true });
+
+    if (error) throw error;
+
+    const result = (data || []).map(item => ({
+      id_carrito: item.id_carrito,
+      id_producto: item.id_producto,
+      cantidad: item.cantidad,
+      precio_unitario: item.precio_unitario,
+      fecha_agregado: item.fecha_agregado,
+      nombre_producto: item.productos?.nombre ?? null,
+      imagen_url: item.productos?.imagen_url ?? null,
+      nombre_usuario: item.carritos?.usuarios?.nombre ?? null,
+      email_usuario: item.carritos?.usuarios?.email ?? null,
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener todos los detalles', details: error.message });
+  }
+};
+
 module.exports = {
   getDetallesByCarrito,
   getDetallesConProductos,
   getDetalleItem,
+  getAllDetalles,
   addDetalleItem,
   updateDetalleItem,
   deleteDetalleItem,
