@@ -232,15 +232,31 @@ const deleteUsuario = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { error: deleteCarritosError } = await supabase
-      .from('carritos')
-      .delete()
-      .eq('id_usuario', id);
+    const { data: pedidos, error: pedidosError } = await supabase
+      .from('pedidos')
+      .select('id_pedido')
+      .eq('id_usuario', id)
+      .limit(1);
 
-    if (deleteCarritosError) {
-      return res.status(500).json({
-        error: 'Error eliminando carritos',
-        details: deleteCarritosError.message
+    if (pedidosError) throw pedidosError;
+
+    if (pedidos && pedidos.length > 0) {
+      return res.status(400).json({
+        error: 'No se puede borrar el usuario porque tiene pedidos asignados'
+      });
+    }
+
+    const { data: carritos, error: carritosError } = await supabase
+      .from('carritos')
+      .select('id_carrito')
+      .eq('id_usuario', id)
+      .limit(1);
+
+    if (carritosError) throw carritosError;
+
+    if (carritos && carritos.length > 0) {
+      return res.status(400).json({
+        error: 'No se puede borrar el usuario porque tiene carritos activos'
       });
     }
 
@@ -250,12 +266,7 @@ const deleteUsuario = async (req, res) => {
       .eq('id_usuario', id)
       .select('id_usuario, nombre, email');
 
-    if (error) {
-      return res.status(500).json({
-        error: 'Error eliminando usuario',
-        details: error.message
-      });
-    }
+    if (error) throw error;
 
     if (!data || data.length === 0) {
       return res.status(404).json({
