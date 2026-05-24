@@ -12,7 +12,6 @@ function Admin() {
         { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Pedidos", path: "/admin/pedidos" },
         { name: "Detalle de pedidos", path: "/admin/detalle-pedidos" },
-        { name: "Pagos", path: "/admin/pagos" },
         { name: "Envíos", path: "/admin/envios" },
         { name: "Carrito", path: "/admin/carrito" },
         { name: "Detalle de Carritos", path: "/admin/detalle-carritos" }
