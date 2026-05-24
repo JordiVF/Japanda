@@ -15,11 +15,12 @@
 .auth-sheet {
     position: fixed;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     z-index: 201;
-    width: min(720px, 100%);
-    background: linear-gradient(294deg, rgba(253, 252, 250, 0.8) 0%, rgba(253, 252, 250, 1) 100%);
+    width: 50%;
+    place-self: center;
+    background: linear-gradient(294deg,rgba(253, 252, 250, 0.8) 0%, rgba(253, 252, 250, 1) 100%);
     border-radius: 28px 28px 0 0;
     max-height: 90dvh;
     overflow-y: auto;
@@ -231,24 +232,11 @@
 .auth-sheet::-webkit-scrollbar { width: 4px; }
 .auth-sheet::-webkit-scrollbar-thumb { background: #e0ddd8; }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .auth-sheet {
-        width: 100%;
-        border-radius: 18px 18px 0 0;
         padding: 16px 18px 32px;
     }
 
-    .auth-close {
-        top: 14px;
-        right: 14px;
-    }
-
-    .auth-title {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
     .auth-grid {
         grid-template-columns: 1fr;
     }
